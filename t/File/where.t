@@ -7,7 +7,7 @@ use warnings;
 use warnings::register;
 
 use vars qw($VERSION $DATE $FILE);
-$VERSION = '0.01';   # automatically generated file
+$VERSION = '0.02';   # automatically generated file
 $DATE = '2004/04/08';
 $FILE = __FILE__;
 
@@ -79,7 +79,7 @@ BEGIN {
    #
    require Test::Tech;
    Test::Tech->import( qw(plan ok skip skip_tests tech_config finish) );
-   plan(tests => 21);
+   plan(tests => 23);
 
 }
 
@@ -135,6 +135,8 @@ END {
     my $absolute_dir2A = File::Spec->catdir($include_dir, 't', 'File', 't', 'File');
     my $absolute_dir2B = File::Spec->catdir($include_dir, 't', 'File', 't');
 
+    my $absolute_file_where = File::Spec->catdir($include_dir, 'lib', 'File', 'Where.pm');
+
     my @inc2 = ($test_script_dir, @INC);  # another way to do unshift
     
     copy $absolute_file1,$absolute_file2;
@@ -149,7 +151,7 @@ ok(  $loaded = $fp->is_package_loaded('File::Where'), # actual results
 #  ok:  1
 
    # Perl code from C:
-my $errors = $fp->load_package( 'File::Where' );
+my $errors = $fp->load_package('File::Where', 'where_pm');
 
 skip_tests( 1 ) unless skip(
       $loaded, # condition to skip test   
@@ -265,33 +267,47 @@ ok(  $actual = $uut->where_pm( 't::File::Where', @inc2), # actual results
 
 #  ok:  17
 
+ok(  $actual = $uut->where_pm( 'File::Where'), # actual results
+     $absolute_file_where, # expected results
+     "",
+     "where_pm subroutine, File::Where boundary case");
+
+#  ok:  18
+
+ok(  $actual = where_pm( 'File::Where'), # actual results
+     $absolute_file_where, # expected results
+     "",
+     "where_pm, File::Where boundary case");
+
+#  ok:  19
+
 ok(  [@actual= $uut->where_pm( 't::File::Where', [$test_script_dir])], # actual results
      [$absolute_file2, $test_script_dir, $relative_file], # expected results
      "",
      "where_pm, array context, array reference path");
 
-#  ok:  18
+#  ok:  20
 
 ok(  [@actual= $uut->where_repository( 't::File' )], # actual results
      [$absolute_dir1A, $include_dir, $relative_dir1], # expected results
      "",
      "where_repository, array context, path absent");
 
-#  ok:  19
+#  ok:  21
 
 ok(  $actual = $uut->where_repository( 't::File', @inc2), # actual results
      $absolute_dir2A, # expected results
      "",
      "where_repository, scalar context, array path");
 
-#  ok:  20
+#  ok:  22
 
 ok(  [@actual= $uut->where_repository( 't::Jolly_Green_Giant', [$test_script_dir])], # actual results
      [$absolute_dir2B, $test_script_dir, 't'], # expected results
      "",
      "where_repository, array context, array reference path");
 
-#  ok:  21
+#  ok:  23
 
    # Perl code from C:
    @INC = @restore_inc; #restore @INC;

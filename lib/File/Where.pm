@@ -10,7 +10,7 @@ use warnings;
 use warnings::register;
 
 use vars qw($VERSION $DATE $FILE);
-$VERSION = '1.12';
+$VERSION = '1.13';
 $DATE = '2004/04/08';
 $FILE = __FILE__;
 
@@ -22,9 +22,9 @@ use Exporter;
 @ISA = qw(Exporter);
 @EXPORT_OK = qw(pm2require where where_dir where_file where_pm where_repository);
 
-1
+# 1
 
-__DATA__
+# __DATA__
 
 #####
 #
@@ -138,8 +138,16 @@ sub where_file
 #
 sub where_pm
 {
-     shift if UNIVERSAL::isa($_[0],__PACKAGE__);
-     where_file(pm2require(shift), @_);
+     #####
+     # Simply drop the $self, have a boundary problem for case where
+     # for File::Where->where_pm('File::Where');
+     # 
+     #
+     my $self = UNIVERSAL::isa($_[0],__PACKAGE__) ? shift : __PACKAGE__;
+     if( @_ == 0 && $self eq 'File::Where' ) {
+         return( where_file($self->pm2require('File::Where') ) );
+     }
+     where_file($self->pm2require(shift), @_);
 }
 
 
@@ -398,14 +406,18 @@ follow on the next lines. For example,
  =>     my $absolute_dir2A = File::Spec->catdir($include_dir, 't', 'File', 't', 'File');
  =>     my $absolute_dir2B = File::Spec->catdir($include_dir, 't', 'File', 't');
 
+ =>     my $absolute_file_where = File::Spec->catdir($include_dir, 'lib', 'File', 'Where.pm');
+
  =>     my @inc2 = ($test_script_dir, @INC);  # another way to do unshift
  =>     
  =>     copy $absolute_file1,$absolute_file2;
 
  =>     my (@actual,$actual); # use for array and scalar context
- => my $errors = $fp->load_package( 'File::Where' )
+ => my $errors = $fp->load_package('File::Where', 'find_pm')
  => $errors
- ''
+ 'Global symbol "@import" requires explicit package name at (eval 5) line 1.
+ 	Variable "@import" is not imported at (eval 5) line 1.
+ 	'
 
  => $actual = $uut->pm2require( "$uut")
  'File\Where.pm'
@@ -484,32 +496,9 @@ follow on the next lines. For example,
  => $actual = $uut->where_pm( 't::File::Where', @inc2)
  'E:\User\SoftwareDiamonds\installation\t\File\t\File\Where.pm'
 
- => [@actual= $uut->where_pm( 't::File::Where', [$test_script_dir])]
- [
-           'E:\User\SoftwareDiamonds\installation\t\File\t\File\Where.pm',
-           'E:\User\SoftwareDiamonds\installation\t\File',
-           't\File\Where.pm'
-         ]
+ => $actual = $uut->where_pm( 'File::Where')
+ 'E:\User\SoftwareDiamonds\installation\lib\File\Where.pm'
 
- => [@actual= $uut->where_repository( 't::File' )]
- [
-           'E:\User\SoftwareDiamonds\installation\t\File',
-           'E:\User\SoftwareDiamonds\installation',
-           't\File'
-         ]
-
- => $actual = $uut->where_repository( 't::File', @inc2)
- 'E:\User\SoftwareDiamonds\installation\t\File\t\File'
-
- => [@actual= $uut->where_repository( 't::Jolly_Green_Giant', [$test_script_dir])]
- [
-           'E:\User\SoftwareDiamonds\installation\t\File\t',
-           'E:\User\SoftwareDiamonds\installation\t\File',
-           't'
-         ]
-
- =>    @INC = @restore_inc; #restore @INC;
- =>    rmtree 't';
 
 =head1 QUALITY ASSURANCE
 

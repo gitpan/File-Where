@@ -7,7 +7,7 @@ use warnings;
 use warnings::register;
 
 use vars qw($VERSION $DATE);
-$VERSION = '0.01';   # automatically generated file
+$VERSION = '0.02';   # automatically generated file
 $DATE = '2004/04/08';
 
 
@@ -129,6 +129,8 @@ demo( "\ \ \ \ use\ File\:\:Spec\;\
 \ \ \ \ my\ \$absolute_dir2A\ \=\ File\:\:Spec\-\>catdir\(\$include_dir\,\ \'t\'\,\ \'File\'\,\ \'t\'\,\ \'File\'\)\;\
 \ \ \ \ my\ \$absolute_dir2B\ \=\ File\:\:Spec\-\>catdir\(\$include_dir\,\ \'t\'\,\ \'File\'\,\ \'t\'\)\;\
 \
+\ \ \ \ my\ \$absolute_file_where\ \=\ File\:\:Spec\-\>catdir\(\$include_dir\,\ \'lib\'\,\ \'File\'\,\ \'Where\.pm\'\)\;\
+\
 \ \ \ \ my\ \@inc2\ \=\ \(\$test_script_dir\,\ \@INC\)\;\ \ \#\ another\ way\ to\ do\ unshift\
 \ \ \ \ \
 \ \ \ \ copy\ \$absolute_file1\,\$absolute_file2\;\
@@ -175,14 +177,16 @@ demo( "\ \ \ \ use\ File\:\:Spec\;\
     my $absolute_dir2A = File::Spec->catdir($include_dir, 't', 'File', 't', 'File');
     my $absolute_dir2B = File::Spec->catdir($include_dir, 't', 'File', 't');
 
+    my $absolute_file_where = File::Spec->catdir($include_dir, 'lib', 'File', 'Where.pm');
+
     my @inc2 = ($test_script_dir, @INC);  # another way to do unshift
     
     copy $absolute_file1,$absolute_file2;
 
     my (@actual,$actual); # use for array and scalar context; # execution
 
-demo( "my\ \$errors\ \=\ \$fp\-\>load_package\(\ \'File\:\:Where\'\ \)"); # typed in command           
-      my $errors = $fp->load_package( 'File::Where' ); # execution
+demo( "my\ \$errors\ \=\ \$fp\-\>load_package\(\'File\:\:Where\'\,\ \'where_pm\'\)"); # typed in command           
+      my $errors = $fp->load_package('File::Where', 'where_pm'); # execution
 
 demo( "\$errors", # typed in command           
       $errors # execution
@@ -246,6 +250,14 @@ demo( "\[\@actual\=\ \$uut\-\>where_pm\(\ \'t\:\:File\:\:Where\'\ \)\]", # typed
 
 demo( "\$actual\ \=\ \$uut\-\>where_pm\(\ \'t\:\:File\:\:Where\'\,\ \@inc2\)", # typed in command           
       $actual = $uut->where_pm( 't::File::Where', @inc2)); # execution
+
+
+demo( "\$actual\ \=\ \$uut\-\>where_pm\(\ \'File\:\:Where\'\)", # typed in command           
+      $actual = $uut->where_pm( 'File::Where')); # execution
+
+
+demo( "\$actual\ \=\ where_pm\(\ \'File\:\:Where\'\)", # typed in command           
+      $actual = where_pm( 'File::Where')); # execution
 
 
 demo( "\[\@actual\=\ \$uut\-\>where_pm\(\ \'t\:\:File\:\:Where\'\,\ \[\$test_script_dir\]\)\]", # typed in command           

@@ -10,26 +10,26 @@ use warnings;
 use warnings::register;
 
 use vars qw($VERSION $DATE $FILE );
-$VERSION = '0.01';
+$VERSION = '0.02';
 $DATE = '2004/04/08';
 $FILE = __FILE__;
 
 use vars qw(%INVENTORY);
 %INVENTORY = (
-    'lib/Docs/Site_SVD/File_Where.pm' => [qw(0.01 2004/04/08), 'new'],
-    'MANIFEST' => [qw(0.01 2004/04/08), 'generated new'],
-    'Makefile.PL' => [qw(0.01 2004/04/08), 'generated new'],
-    'README' => [qw(0.01 2004/04/08), 'generated new'],
-    'lib/File/Where.pm' => [qw(1.12 2004/04/08), 'new'],
-    't/File/where.d' => [qw(0.01 2004/04/08), 'new'],
-    't/File/Where.pm' => [qw(0.01 2004/04/08), 'new'],
-    't/File/where.t' => [qw(0.01 2004/04/08), 'new'],
-    't/File/where.d' => [qw(0.01 2004/04/08), 'new'],
-    't/File/Where.pm' => [qw(0.01 2004/04/08), 'new'],
-    't/File/where.t' => [qw(0.01 2004/04/08), 'new'],
-    't/File/File/Package.pm' => [qw(1.13 2004/04/08), 'new'],
-    't/File/Test/Tech.pm' => [qw(1.17 2004/04/08), 'new'],
-    't/File/Data/Secs2.pm' => [qw(1.15 2004/04/08), 'new'],
+    'lib/Docs/Site_SVD/File_Where.pm' => [qw(0.02 2004/04/08), 'revised 0.01'],
+    'MANIFEST' => [qw(0.02 2004/04/08), 'generated, replaces 0.01'],
+    'Makefile.PL' => [qw(0.02 2004/04/08), 'generated, replaces 0.01'],
+    'README' => [qw(0.02 2004/04/08), 'generated, replaces 0.01'],
+    'lib/File/Where.pm' => [qw(1.13 2004/04/08), 'revised 1.12'],
+    't/File/where.d' => [qw(0.02 2004/04/08), 'revised 0.01'],
+    't/File/Where.pm' => [qw(0.02 2004/04/08), 'revised 0.01'],
+    't/File/where.t' => [qw(0.02 2004/04/08), 'revised 0.01'],
+    't/File/where.d' => [qw(0.02 2004/04/08), 'unchanged'],
+    't/File/Where.pm' => [qw(0.02 2004/04/08), 'unchanged'],
+    't/File/where.t' => [qw(0.02 2004/04/08), 'unchanged'],
+    't/File/File/Package.pm' => [qw(1.14 2004/04/08), 'revised 1.13'],
+    't/File/Test/Tech.pm' => [qw(1.17 2004/04/08), 'unchanged'],
+    't/File/Data/Secs2.pm' => [qw(1.15 2004/04/08), 'unchanged'],
 
 );
 
@@ -56,9 +56,9 @@ use vars qw(%INVENTORY);
 
   File::Where - find the absolute file for a program module; dir for a repository
 
- Revision: -
+ Revision: A
 
- Version: 0.01
+ Version: 0.02
 
  Date: 2004/04/08
 
@@ -92,12 +92,12 @@ program modules, such the
 The subroutines in File::Where program module finds the absolute file or dir for a
 program module, program module repository, relative file, relative directory
 by searching the directories in the @INC array of directories or an
-override array of directories. The File::Where supercedes the File::PM2File
-program module.
+override array of directories. The File::Where program module 
+supercedes the File::PM2File program module.
 
 =head2 1.3 Document overview.
 
-This document releases File::Where version 0.01
+This document releases File::Where version 0.02
 providing a description of the inventory, installation
 instructions and other information necessary to
 utilize and track this release.
@@ -112,7 +112,7 @@ system file specification.
 
 This document releases the file 
 
- File-Where-0.01.tar.gz
+ File-Where-0.02.tar.gz
 
 found at the following repository(s):
 
@@ -184,25 +184,43 @@ consists of the following files:
 
  file                                                         version date       comment
  ------------------------------------------------------------ ------- ---------- ------------------------
- lib/Docs/Site_SVD/File_Where.pm                              0.01    2004/04/08 new
- MANIFEST                                                     0.01    2004/04/08 generated new
- Makefile.PL                                                  0.01    2004/04/08 generated new
- README                                                       0.01    2004/04/08 generated new
- lib/File/Where.pm                                            1.12    2004/04/08 new
- t/File/where.d                                               0.01    2004/04/08 new
- t/File/Where.pm                                              0.01    2004/04/08 new
- t/File/where.t                                               0.01    2004/04/08 new
- t/File/where.d                                               0.01    2004/04/08 new
- t/File/Where.pm                                              0.01    2004/04/08 new
- t/File/where.t                                               0.01    2004/04/08 new
- t/File/File/Package.pm                                       1.13    2004/04/08 new
- t/File/Test/Tech.pm                                          1.17    2004/04/08 new
- t/File/Data/Secs2.pm                                         1.15    2004/04/08 new
+ lib/Docs/Site_SVD/File_Where.pm                              0.02    2004/04/08 revised 0.01
+ MANIFEST                                                     0.02    2004/04/08 generated, replaces 0.01
+ Makefile.PL                                                  0.02    2004/04/08 generated, replaces 0.01
+ README                                                       0.02    2004/04/08 generated, replaces 0.01
+ lib/File/Where.pm                                            1.13    2004/04/08 revised 1.12
+ t/File/where.d                                               0.02    2004/04/08 revised 0.01
+ t/File/Where.pm                                              0.02    2004/04/08 revised 0.01
+ t/File/where.t                                               0.02    2004/04/08 revised 0.01
+ t/File/where.d                                               0.02    2004/04/08 unchanged
+ t/File/Where.pm                                              0.02    2004/04/08 unchanged
+ t/File/where.t                                               0.02    2004/04/08 unchanged
+ t/File/File/Package.pm                                       1.14    2004/04/08 revised 1.13
+ t/File/Test/Tech.pm                                          1.17    2004/04/08 unchanged
+ t/File/Data/Secs2.pm                                         1.15    2004/04/08 unchanged
 
 
 =head2 3.3 Changes
 
+The changes to the previous version are as follows:
+
+=over 4
+
+=item File-Where-0.01
+
 Originated.
+
+=item File-Where-0.02
+
+Added code to where_pm for the boundary case where
+
+  where_pm('File::Where') # subroutine interface
+  'File::Where'->where_pm('File::Where') # class interface
+
+This bug was discovered because the obsoleted File::PM2File
+module now uses File::Where for backwards compatibility.
+
+=back
 
 =head2 3.4 Adaptation data.
 
@@ -240,13 +258,13 @@ Enter one of the following repositories in a web browser:
   http://www.softwarediamonds/packages/
   http://www.perl.com/CPAN-local/authors/id/S/SO/SOFTDIA/
 
-Right click on 'File-Where-0.01.tar.gz' and download to a temporary
+Right click on 'File-Where-0.02.tar.gz' and download to a temporary
 installation directory.
 Enter the following where $make is 'nmake' for microsoft
 windows; otherwise 'make'.
 
- gunzip File-Where-0.01.tar.gz
- tar -xf File-Where-0.01.tar
+ gunzip File-Where-0.02.tar.gz
+ tar -xf File-Where-0.02.tar
  perl Makefile.PL
  $make test
  $make install
@@ -362,16 +380,20 @@ __DATA__
 DISTNAME: File-Where^
 REPOSITORY_DIR: packages^
 
-VERSION : 0.01^
-FREEZE: 0^
+VERSION : 0.02^
+FREEZE: 1^
 PREVIOUS_DISTNAME:  ^
-PREVIOUS_RELEASE:  ^
-REVISION: -^
+PREVIOUS_RELEASE: 0.01^
+REVISION: A^
 
 AUTHOR  : SoftwareDiamonds.com E<lt>support@SoftwareDiamonds.comE<gt>^
 
 ABSTRACT: 
-find the absolute file for a program module; dir for a repository
+The subroutines in File::Where program module finds the absolute file or dir for a
+program module, program module repository, relative file, or relative directory
+by searching the directories in the @INC array of directories or an
+override array of directories. The File::Where supercedes the File::PM2File
+program module.
 ^
 
 TITLE   :  File::Where - find the absolute file for a program module; dir for a repository^
@@ -409,7 +431,26 @@ TESTS: t/File/where.t^
 
 EXE_FILES:  ^
 CHANGES:
+The changes to the previous version are as follows:
+
+\=over 4
+
+\=item File-Where-0.01
+
 Originated.
+
+\=item File-Where-0.02
+
+Added code to where_pm for the boundary case where
+
+  where_pm('File::Where') # subroutine interface
+  'File::Where'->where_pm('File::Where') # class interface
+
+This bug was discovered because the obsoleted File::PM2File
+module now uses File::Where for backwards compatibility.
+
+\=back
+
 ^
 
 DOCUMENT_OVERVIEW:
@@ -428,8 +469,8 @@ program modules, such the
 The subroutines in File::Where program module finds the absolute file or dir for a
 program module, program module repository, relative file, relative directory
 by searching the directories in the @INC array of directories or an
-override array of directories. The File::Where supercedes the File::PM2File
-program module.
+override array of directories. The File::Where program module 
+supercedes the File::PM2File program module.
 
 ^
 

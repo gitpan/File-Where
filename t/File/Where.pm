@@ -10,7 +10,7 @@ use warnings;
 use warnings::register;
 
 use vars qw($VERSION $DATE $FILE );
-$VERSION = '0.01';
+$VERSION = '0.02';
 $DATE = '2004/04/08';
 $FILE = __FILE__;
 
@@ -80,7 +80,7 @@ L<STD FormDB Test Description Fields|Test::STDmaker/STD FormDB Test Description 
 
 =head2 Test Plan
 
- T: 21^
+ T: 23^
 
 =head2 ok: 1
 
@@ -121,6 +121,7 @@ L<STD FormDB Test Description Fields|Test::STDmaker/STD FormDB Test Description 
      my $absolute_file2 = File::Spec->catfile($test_script_dir, 't', 'File', 'Where.pm');
      my $absolute_dir2A = File::Spec->catdir($include_dir, 't', 'File', 't', 'File');
      my $absolute_dir2B = File::Spec->catdir($include_dir, 't', 'File', 't');
+     my $absolute_file_where = File::Spec->catdir($include_dir, 'lib', 'File', 'Where.pm');
      my @inc2 = ($test_script_dir, @INC);  # another way to do unshift
      
      copy $absolute_file1,$absolute_file2;
@@ -136,7 +137,7 @@ L<STD FormDB Test Description Fields|Test::STDmaker/STD FormDB Test Description 
 
   N: Load UUT^
   S: $loaded^
-  C: my $errors = $fp->load_package( 'File::Where' )^
+  C: my $errors = $fp->load_package('File::Where', 'where_pm')^
   A: $errors^
  SE: ''^
  ok: 2^
@@ -248,31 +249,45 @@ L<STD FormDB Test Description Fields|Test::STDmaker/STD FormDB Test Description 
 
 =head2 ok: 18
 
-  N: where_pm, array context, array reference path^
-  A: [@actual= $uut->where_pm( 't::File::Where', [$test_script_dir])]^
-  E: [$absolute_file2, $test_script_dir, $relative_file]^
+  N: where_pm subroutine, File::Where boundary case^
+  A: $actual = $uut->where_pm( 'File::Where')^
+  E: $absolute_file_where^
  ok: 18^
 
 =head2 ok: 19
 
-  N: where_repository, array context, path absent^
-  A: [@actual= $uut->where_repository( 't::File' )]^
-  E: [$absolute_dir1A, $include_dir, $relative_dir1]^
+  N: where_pm, File::Where boundary case^
+  A: $actual = where_pm( 'File::Where')^
+  E: $absolute_file_where^
  ok: 19^
 
 =head2 ok: 20
 
-  N: where_repository, scalar context, array path^
-  A: $actual = $uut->where_repository( 't::File', @inc2)^
-  E: $absolute_dir2A^
+  N: where_pm, array context, array reference path^
+  A: [@actual= $uut->where_pm( 't::File::Where', [$test_script_dir])]^
+  E: [$absolute_file2, $test_script_dir, $relative_file]^
  ok: 20^
 
 =head2 ok: 21
 
+  N: where_repository, array context, path absent^
+  A: [@actual= $uut->where_repository( 't::File' )]^
+  E: [$absolute_dir1A, $include_dir, $relative_dir1]^
+ ok: 21^
+
+=head2 ok: 22
+
+  N: where_repository, scalar context, array path^
+  A: $actual = $uut->where_repository( 't::File', @inc2)^
+  E: $absolute_dir2A^
+ ok: 22^
+
+=head2 ok: 23
+
   N: where_repository, array context, array reference path^
   A: [@actual= $uut->where_repository( 't::Jolly_Green_Giant', [$test_script_dir])]^
   E: [$absolute_dir2B, $test_script_dir, 't']^
- ok: 21^
+ ok: 23^
 
 
 
@@ -392,7 +407,7 @@ Demo: where.d^
 Verify: where.t^
 
 
- T: 21^
+ T: 23^
 
 
  C:
@@ -437,6 +452,8 @@ Verify: where.t^
     my $absolute_dir2A = File::Spec->catdir($include_dir, 't', 'File', 't', 'File');
     my $absolute_dir2B = File::Spec->catdir($include_dir, 't', 'File', 't');
 
+    my $absolute_file_where = File::Spec->catdir($include_dir, 'lib', 'File', 'Where.pm');
+
     my @inc2 = ($test_script_dir, @INC);  # another way to do unshift
     
     copy $absolute_file1,$absolute_file2;
@@ -452,7 +469,7 @@ ok: 1^
 
  N: Load UUT^
  S: $loaded^
- C: my $errors = $fp->load_package( 'File::Where' )^
+ C: my $errors = $fp->load_package('File::Where', 'where_pm')^
  A: $errors^
 SE: ''^
 ok: 2^
@@ -532,25 +549,35 @@ ok: 16^
  E: $absolute_file2^
 ok: 17^
 
- N: where_pm, array context, array reference path^
+ N: where_pm, File::Where boundary case^
+ A: $actual = $uut->where_pm( 'File::Where')^
+ E: $absolute_file_where^
+ok: 18^
+
+ N: where_pm, File::Where boundary case^
+ A: $actual = where_pm( 'File::Where')^
+ E: $absolute_file_where^
+ok: 19^
+
+ N: where_pm subroutine, array context, array reference path^
  A: [@actual= $uut->where_pm( 't::File::Where', [$test_script_dir])]^
  E: [$absolute_file2, $test_script_dir, $relative_file]^
-ok: 18^
+ok: 20^
 
  N: where_repository, array context, path absent^
  A: [@actual= $uut->where_repository( 't::File' )]^
  E: [$absolute_dir1A, $include_dir, $relative_dir1]^
-ok: 19^
+ok: 21^
 
  N: where_repository, scalar context, array path^
  A: $actual = $uut->where_repository( 't::File', @inc2)^
  E: $absolute_dir2A^
-ok: 20^
+ok: 22^
 
  N: where_repository, array context, array reference path^
  A: [@actual= $uut->where_repository( 't::Jolly_Green_Giant', [$test_script_dir])]^
  E: [$absolute_dir2B, $test_script_dir, 't']^
-ok: 21^
+ok: 23^
 
 
  C:

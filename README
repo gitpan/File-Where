@@ -229,14 +229,18 @@ DEMONSTRATION
      =>     my $absolute_dir2A = File::Spec->catdir($include_dir, 't', 'File', 't', 'File');
      =>     my $absolute_dir2B = File::Spec->catdir($include_dir, 't', 'File', 't');
 
+     =>     my $absolute_file_where = File::Spec->catdir($include_dir, 'lib', 'File', 'Where.pm');
+
      =>     my @inc2 = ($test_script_dir, @INC);  # another way to do unshift
      =>     
      =>     copy $absolute_file1,$absolute_file2;
 
      =>     my (@actual,$actual); # use for array and scalar context
-     => my $errors = $fp->load_package( 'File::Where' )
+     => my $errors = $fp->load_package('File::Where', 'find_pm')
      => $errors
-     ''
+     'Global symbol "@import" requires explicit package name at (eval 5) line 1.
+            Variable "@import" is not imported at (eval 5) line 1.
+            '
 
      => $actual = $uut->pm2require( "$uut")
      'File\Where.pm'
@@ -315,32 +319,8 @@ DEMONSTRATION
      => $actual = $uut->where_pm( 't::File::Where', @inc2)
      'E:\User\SoftwareDiamonds\installation\t\File\t\File\Where.pm'
 
-     => [@actual= $uut->where_pm( 't::File::Where', [$test_script_dir])]
-     [
-               'E:\User\SoftwareDiamonds\installation\t\File\t\File\Where.pm',
-               'E:\User\SoftwareDiamonds\installation\t\File',
-               't\File\Where.pm'
-             ]
-
-     => [@actual= $uut->where_repository( 't::File' )]
-     [
-               'E:\User\SoftwareDiamonds\installation\t\File',
-               'E:\User\SoftwareDiamonds\installation',
-               't\File'
-             ]
-
-     => $actual = $uut->where_repository( 't::File', @inc2)
-     'E:\User\SoftwareDiamonds\installation\t\File\t\File'
-
-     => [@actual= $uut->where_repository( 't::Jolly_Green_Giant', [$test_script_dir])]
-     [
-               'E:\User\SoftwareDiamonds\installation\t\File\t',
-               'E:\User\SoftwareDiamonds\installation\t\File',
-               't'
-             ]
-
-     =>    @INC = @restore_inc; #restore @INC;
-     =>    rmtree 't';
+     => $actual = $uut->where_pm( 'File::Where')
+     'E:\User\SoftwareDiamonds\installation\lib\File\Where.pm'
 
 QUALITY ASSURANCE
     Running the test script 'PM2File.t' found in the
@@ -471,9 +451,9 @@ Title Page
 
       File::Where - find the absolute file for a program module; dir for a repository
 
-     Revision: -
+     Revision: A
 
-     Version: 0.01
+     Version: 0.02
 
      Date: 2004/04/08
 
@@ -501,11 +481,11 @@ Title Page
     The subroutines in File::Where program module finds the absolute file or
     dir for a program module, program module repository, relative file,
     relative directory by searching the directories in the @INC array of
-    directories or an override array of directories. The File::Where
-    supercedes the File::PM2File program module.
+    directories or an override array of directories. The File::Where program
+    module supercedes the File::PM2File program module.
 
   1.3 Document overview.
-    This document releases File::Where version 0.01 providing a description
+    This document releases File::Where version 0.02 providing a description
     of the inventory, installation instructions and other information
     necessary to utilize and track this release.
 
@@ -516,7 +496,7 @@ Title Page
   3.1 Inventory of materials released.
     This document releases the file
 
-     File-Where-0.01.tar.gz
+     File-Where-0.02.tar.gz
 
     found at the following repository(s):
 
@@ -565,23 +545,35 @@ Title Page
 
      file                                                         version date       comment
      ------------------------------------------------------------ ------- ---------- ------------------------
-     lib/Docs/Site_SVD/File_Where.pm                              0.01    2004/04/08 new
-     MANIFEST                                                     0.01    2004/04/08 generated new
-     Makefile.PL                                                  0.01    2004/04/08 generated new
-     README                                                       0.01    2004/04/08 generated new
-     lib/File/Where.pm                                            1.12    2004/04/08 new
-     t/File/where.d                                               0.01    2004/04/08 new
-     t/File/Where.pm                                              0.01    2004/04/08 new
-     t/File/where.t                                               0.01    2004/04/08 new
-     t/File/where.d                                               0.01    2004/04/08 new
-     t/File/Where.pm                                              0.01    2004/04/08 new
-     t/File/where.t                                               0.01    2004/04/08 new
-     t/File/File/Package.pm                                       1.13    2004/04/08 new
-     t/File/Test/Tech.pm                                          1.17    2004/04/08 new
-     t/File/Data/Secs2.pm                                         1.15    2004/04/08 new
+     lib/Docs/Site_SVD/File_Where.pm                              0.02    2004/04/08 revised 0.01
+     MANIFEST                                                     0.02    2004/04/08 generated, replaces 0.01
+     Makefile.PL                                                  0.02    2004/04/08 generated, replaces 0.01
+     README                                                       0.02    2004/04/08 generated, replaces 0.01
+     lib/File/Where.pm                                            1.13    2004/04/08 revised 1.12
+     t/File/where.d                                               0.02    2004/04/08 revised 0.01
+     t/File/Where.pm                                              0.02    2004/04/08 revised 0.01
+     t/File/where.t                                               0.02    2004/04/08 revised 0.01
+     t/File/where.d                                               0.02    2004/04/08 unchanged
+     t/File/Where.pm                                              0.02    2004/04/08 unchanged
+     t/File/where.t                                               0.02    2004/04/08 unchanged
+     t/File/File/Package.pm                                       1.14    2004/04/08 revised 1.13
+     t/File/Test/Tech.pm                                          1.17    2004/04/08 unchanged
+     t/File/Data/Secs2.pm                                         1.15    2004/04/08 unchanged
 
   3.3 Changes
-    Originated.
+    The changes to the previous version are as follows:
+
+    File-Where-0.01
+        Originated.
+
+    File-Where-0.02
+        Added code to where_pm for the boundary case where
+
+          where_pm('File::Where') # subroutine interface
+          'File::Where'->where_pm('File::Where') # class interface
+
+        This bug was discovered because the obsoleted File::PM2File module
+        now uses File::Where for backwards compatibility.
 
   3.4 Adaptation data.
     This installation requires that the installation site has the Perl
@@ -612,12 +604,12 @@ Title Page
           http://www.softwarediamonds/packages/
           http://www.perl.com/CPAN-local/authors/id/S/SO/SOFTDIA/
 
-        Right click on 'File-Where-0.01.tar.gz' and download to a temporary
+        Right click on 'File-Where-0.02.tar.gz' and download to a temporary
         installation directory. Enter the following where $make is 'nmake'
         for microsoft windows; otherwise 'make'.
 
-         gunzip File-Where-0.01.tar.gz
-         tar -xf File-Where-0.01.tar
+         gunzip File-Where-0.02.tar.gz
+         tar -xf File-Where-0.02.tar
          perl Makefile.PL
          $make test
          $make install
