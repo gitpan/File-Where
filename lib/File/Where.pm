@@ -10,21 +10,68 @@ use warnings;
 use warnings::register;
 
 use vars qw($VERSION $DATE $FILE);
-$VERSION = '1.15';
-$DATE = '2004/04/09';
+$VERSION = '1.16';
+$DATE = '2004/05/04';
 $FILE = __FILE__;
 
 use File::Spec;
-use SelfLoader;
+use Cwd;
+use File::Glob ':glob';
 
 use vars qw(@ISA @EXPORT_OK);
 use Exporter;
 @ISA = qw(Exporter);
-@EXPORT_OK = qw(pm2require where where_dir where_file where_pm where_repository);
+@EXPORT_OK = qw(is_module dir_pms pm2require program_modules repository_pms
+             where where_dir where_file where_pm where_repository);
+
+use SelfLoader;
 
 1
 
 __DATA__
+
+
+#####
+# Determine if a module is valid
+#
+sub is_module
+{
+   shift if UNIVERSAL::isa($_[0],__PACKAGE__);
+   my ($module, @modules) = @_;
+
+   ($module) = $module =~ /^\s*(.*)\s*$/; # zap leading, trailing white space
+   my $length = length($module);
+   $module = lc($module);
+   return undef unless( $length );
+
+   my $module_found = '';
+   my $module_test;
+   foreach  (@modules) {
+       if( $module eq  substr(lc($_), 0, $length)) {
+           if( $module_found ) {
+               warn "# Ambiguous $module\n";
+               return undef;
+           }
+           $module_found = $_;
+       }
+   }
+   return $module_found if $module_found;
+   warn( "# Cannot find sub module $module.\n");
+   undef
+
+}
+
+
+#####
+# Determine the output generator program modules
+#
+sub dir_pms
+{
+   shift if UNIVERSAL::isa($_[0],__PACKAGE__);
+   my $abs_dir = where_dir( @_ ); # need scalar context
+   program_modules( $abs_dir );
+}
+
 
 #####
 #
@@ -33,7 +80,43 @@ sub pm2require
 {
      shift if UNIVERSAL::isa($_[0],__PACKAGE__);
      File::Spec->catfile( split /::/, $_[0] . '.pm');
+}
 
+
+#####
+# Determine the output generator program modules
+#
+sub program_modules
+{
+   shift if UNIVERSAL::isa($_[0],__PACKAGE__);
+
+   my $restore_dir = cwd();
+   my $dir_file = shift;
+   my $file_flag = shift;
+   $file_flag = ($file_flag) ? '' : 'nofile';
+   my ($vol, $dirs, undef) = File::Spec->splitpath($dir_file, $file_flag);
+   chdir $vol if $vol;
+   chdir $dirs if $dirs;
+   $dirs = File::Spec->catdir( @_ );
+   chdir $dirs if $dirs;
+   my @modules = bsd_glob( '*.pm' );
+   foreach (@modules) {
+       $_ =~ s/\.pm$//;
+   }
+   chdir $restore_dir;
+   @modules
+
+}
+
+
+#####
+# Determine the output generator program modules
+#
+sub repository_pms
+{
+   shift if UNIVERSAL::isa($_[0],__PACKAGE__);
+   my $abs_dir = where_repository( @_ ); # need scalar context
+   program_modules( $abs_dir );
 }
 
 
@@ -177,85 +260,106 @@ File::Where - find the absolute file for a program module; absolute dir for a re
  #  
  use File::Where qw(pm2require where where_dir where_file where_pm where_repository);
 
+ $program_module                  = is_module(@program_modules);
+ @program_modules                 = dir_pms( $dir );
+ @program_modules                 = program_modules( $dir, 'file_flag', @dirs);
  $file                            = pm2require($pm);
+ @program_modules                 = repository_pms($repository);
 
  $abs_file                        = where($relative_file);
- ($abs_file, $inc_path, $rel_fle) = where($relative_file)
  $abs_file                        = where($relative_file, \@path);
- ($abs_file, $inc_path, $rel_fle) = where($relative_file, \@path)
+
+ ($abs_file, $inc_path, $rel_fle) = where($relative_file)
+ ($abs_file, $inc_path, $rel_fle) = where($relative_file, \@path);
+
  $abs_dir                         = where($relative_dir, '', 'nofile'); 
- ($abs_dir, $inc_path, $rel_dir)  = where($relative_dir, '', 'nofile');
  $abs_dir                         = where($relative_dir, \@path, 'nofile'); 
+
+ ($abs_dir, $inc_path, $rel_dir)  = where($relative_dir, '', 'nofile');
  ($abs_dir, $inc_path, $rel_dir)  = where($relative_dir, \@path, 'nofile');
 
  $abs_dir                         = where_dir($relative_dir); 
- ($abs_dir, $inc_path, $rel_dir)  = where_dir($relative_dir);
  $abs_dir                         = where_dir($relative_dir, \@path; 
- ($abs_dir, $inc_path, $rel_dir)  = where_dir($relative_dir, \@path);
  $abs_dir                         = where_dir($relative_dir, @path; 
+
+ ($abs_dir, $inc_path, $rel_dir)  = where_dir($relative_dir);
+ ($abs_dir, $inc_path, $rel_dir)  = where_dir($relative_dir, \@path);
  ($abs_dir, $inc_path, $rel_dir)  = where_dir($relative_dir, @path);
 
  $abs_file                        = where_file($relative_file);
- ($abs_file, $inc_path, $rel_fle) = where_file($relative_file)
  $abs_file                        = where_file($relative_file, \@path);
- ($abs_file, $inc_path, $rel_fle) = where_file($relative_file, \@path)
  $abs_file                        = where_file($relative_file, @path);
+
+ ($abs_file, $inc_path, $rel_fle) = where_file($relative_file)
+ ($abs_file, $inc_path, $rel_fle) = where_file($relative_file, \@path)
  ($abs_file, $inc_path, $rel_fle) = where_file($relative_file, @path)
 
  $abs_file                        = where_pm($pm); 
- ($abs_file, $inc_path, $require) = where_pm($pm);
  $abs_file                        = where_pm($pm, \@path);
- ($abs_file, $inc_path, $require) = where_pm($pm, \@path);
  $abs_file                        = where_pm($pm, @path);
+
+ ($abs_file, $inc_path, $require) = where_pm($pm);
+ ($abs_file, $inc_path, $require) = where_pm($pm, \@path);
  ($abs_file, $inc_path, $require) = where_pm($pm, @path);
 
  $abs_dir                         = where_repository($repository);
- ($abs_dir,  $inc_path, $rel_dir) = where_repository($repository);
  $abs_dir                         = where_repository($repository, \@path);
- ($abs_dir,  $inc_path, $rel_dir) = where_repository($repository, \@path);
  $abs_dir                         = where_repository($repository, @path);
+
+ ($abs_dir,  $inc_path, $rel_dir) = where_repository($repository);
+ ($abs_dir,  $inc_path, $rel_dir) = where_repository($repository, \@path);
  ($abs_dir,  $inc_path, $rel_dir) = where_repository($repository, @path);
 
  #######
  # Class interface
  #
+ $program_module                  = File::Where->is_module(@program_modules);
+ @program_modules                 = File::Where->dir_pms( $dir );
+ @program_modules                 = File::Where->program_modules( $dir, 'file_flag', @dirs);
  $file                            = File::Where->pm2require($pm);
+ @program_modules                 = File::Where->repository_pms($repository);
+
 
  $abs_file                        = File::Where->where($relative_file);
- ($abs_file, $inc_path, $require) = File::Where->where($relative_file)
  $abs_file                        = File::Where->where($relative_file, \@path);
- ($abs_file, $inc_path, $require) = File::Where->where($relative_file, \@path)
  $abs_dir                         = File::Where->where($relative_dir, '', 'nofile'); 
- ($abs_dir, $inc_path, $rel_dir)  = File::Where->where($relative_dir, '', 'nofile');
  $abs_dir                         = File::Where->where($relative_dir, \@path, 'nofile'); 
+
+ ($abs_file, $inc_path, $require) = File::Where->where($relative_file)
+ ($abs_file, $inc_path, $require) = File::Where->where($relative_file, \@path)
+ ($abs_dir, $inc_path, $rel_dir)  = File::Where->where($relative_dir, '', 'nofile');
  ($abs_dir, $inc_path, $rel_dir)  = File::Where->where($relative_dir, \@path, 'nofile');
 
  $abs_dir                         = File::Where->where_dir($relative_dir); 
- ($abs_dir, $inc_path, $rel_dir)  = File::Where->where_dir($relative_dir);
  $abs_dir                         = File::Where->where_dir($relative_dir, \@path; 
- ($abs_dir, $inc_path, $rel_dir)  = File::Where->where_dir($relative_dir, \@path);
  $abs_dir                         = File::Where->where_dir($relative_dir, @path; 
+
+ ($abs_dir, $inc_path, $rel_dir)  = File::Where->where_dir($relative_dir);
+ ($abs_dir, $inc_path, $rel_dir)  = File::Where->where_dir($relative_dir, \@path);
  ($abs_dir, $inc_path, $rel_dir)  = File::Where->where_dir($relative_dir, @path);
 
  $abs_file                        = File::Where->where_file($relative_file);
- ($abs_file, $inc_path, $require) = File::Where->where_file($relative_file)
  $abs_file                        = File::Where->where_file($relative_file, \@path);
- ($abs_file, $inc_path, $require) = File::Where->where_file($relative_file, \@path)
  $abs_file                        = File::Where->where_file($relative_file, @path);
+ 
+ ($abs_file, $inc_path, $require) = File::Where->where_file($relative_file)
+ ($abs_file, $inc_path, $require) = File::Where->where_file($relative_file, \@path)
  ($abs_file, $inc_path, $require) = File::Where->where_file($relative_file, @path)
 
  $abs_file                        = File::Where->where_pm($pm); 
- ($abs_file, $inc_path, $require) = File::Where->where_pm($pm);
  $abs_file                        = File::Where->where_pm($pm, \@path);
- ($abs_file, $inc_path, $require) = File::Where->where_pm($pm, \@path);
  $abs_file                        = File::Where->where_pm($pm, @path);
+
+ ($abs_file, $inc_path, $require) = File::Where->where_pm($pm);
+ ($abs_file, $inc_path, $require) = File::Where->where_pm($pm, \@path);
  ($abs_file, $inc_path, $require) = File::Where->where_pm($pm, @path);
 
  $abs_dir                         = File::Where->where_repository($repository);
- ($abs_dir,  $inc_path, $rel_dir) = File::Where->where_repository($repository);
  $abs_dir                         = File::Where->where_repository($repository, \@path);
- ($abs_dir,  $inc_path, $rel_dir) = File::Where->where_repository($repository, \@path);
  $abs_dir                         = File::Where->where_repository($repository, @path);
+
+ ($abs_dir,  $inc_path, $rel_dir) = File::Where->where_repository($repository);
+ ($abs_dir,  $inc_path, $rel_dir) = File::Where->where_repository($repository, \@path);
  ($abs_dir,  $inc_path, $rel_dir) = File::Where->where_repository($repository, @path);
 
 =head1 DESCRIPTION
@@ -265,7 +369,39 @@ module that has not been loaded. The File::Where module provides methods
 to find this information. For loaded files, using the hash %INC may
 perform better than using the methods in this module.
 
-=head1 METHODS/SUBROUTINES
+=head1 SUBROUTINES
+
+=head2 is_module
+
+ $program_module = is_module(@program_modules);
+
+The C<is_module> subroutine determines if a I<$module> is present
+in a list of modules C<@modules>. The detemination is case insensitive and
+only the leading characters are needed.
+
+=head2 dir_pms
+
+ @program_modules = dir_pms( $dir );
+
+The C<dir_pms> subroutine returns the C<@program_modules> in directory C<$dir>. 
+
+=head2 program_modules
+
+ @program_modules = program_modules( $dir, '$file_flag', @dirs);
+
+The C<program_modules> subroutine returns the program_modules in
+the dir C<File::Spec->catdir($dir,@dirs) with an empty 'file_flag';
+otherwise with a 'file_flag',  C<$dir> is
+a file specification and C<program_modules> subroutine only uses
+the directory portion of C<$dir>.
+
+=head2 repository_pms
+
+ @program_modules = repository_pms($repository);
+
+The C<repository_pms> returns the C<@program_modules> in C<repository>.
+A repository is the a program module name that corresponds to a
+directory. For example, a repository for C<File::Where> is C<File>.
 
 =head2 pm2require subroutine
 
@@ -351,388 +487,413 @@ searches the C<@path> list of directories instead of the C<@INC> list of directo
 
 =head1 DEMONSTRATION
 
- ~~~~~~ Demonstration overview ~~~~~
+ #########
+ # perl Where.d
+ ###
 
-Perl code begins with the prompt
+~~~~~~ Demonstration overview ~~~~~
 
- =>
+The results from executing the Perl Code 
+follow on the next lines as comments. For example,
 
-The selected results from executing the Perl Code 
-follow on the next lines. For example,
+ 2 + 2
+ # 4
 
- => 2 + 2
- 4
+~~~~~~ The demonstration follows ~~~~~
 
- ~~~~~~ The demonstration follows ~~~~~
+     use File::Spec;
+     use File::Copy;
+     use File::Path;
+     use File::Package;
+     my $fp = 'File::Package';
 
- =>     use File::Spec;
- =>     use File::Copy;
- =>     use File::Path;
- =>     use File::Package;
- =>     my $fp = 'File::Package';
+     my $uut = 'File::Where';
+     my $loaded = '';
+     # Use the test file as an example since know its absolute path
+     #
+     my $test_script_dir = cwd();
+     chdir File::Spec->updir();
+     chdir File::Spec->updir();
+     my $include_dir = cwd();
+     chdir $test_script_dir;
+     my $OS = $^O;  # need to escape ^
+     unless ($OS) {   # on some perls $^O is not defined
+         require Config;
+ 	$OS = $Config::Config{'osname'};
+     } 
+     $include_dir =~ s=/=\\=g if( $OS eq 'MSWin32');
+     $test_script_dir =~ s=/=\\=g if( $OS eq 'MSWin32');
 
- =>     my $uut = 'File::Where';
- =>     my $loaded = '';
- =>     # Use the test file as an example since know its absolute path
- =>     #
- =>     my $test_script_dir = cwd();
- =>     chdir File::Spec->updir();
- =>     chdir File::Spec->updir();
- =>     my $include_dir = cwd();
- =>     chdir $test_script_dir;
- =>     my $OS = $^O;  # need to escape ^
- =>     unless ($OS) {   # on some perls $^O is not defined
- =>         require Config;
- => 	$OS = $Config::Config{'osname'};
- =>     } 
- =>     $include_dir =~ s=/=\\=g if( $OS eq 'MSWin32');
- =>     $test_script_dir =~ s=/=\\=g if( $OS eq 'MSWin32');
+     # Put base directory as the first in the @INC path
+     #
+     my @restore_inc = @INC;
 
- =>     # Put base directory as the first in the @INC path
- =>     #
- =>     my @restore_inc = @INC;
+     my $relative_file = File::Spec->catfile('t', 'File', 'Where.pm'); 
+     my $relative_dir1 = File::Spec->catdir('t', 'File');
+     my $relative_dir2 = File::Spec->catdir('t', 'Jolly_Green_Giant');
 
- =>     my $relative_file = File::Spec->catfile('t', 'File', 'Where.pm'); 
- =>     my $relative_dir1 = File::Spec->catdir('t', 'File');
- =>     my $relative_dir2 = File::Spec->catdir('t', 'Jolly_Green_Giant');
+     my $absolute_file1 = File::Spec->catfile($include_dir, 't', 'File', 'Where.pm');
+     my $absolute_dir1A = File::Spec->catdir($include_dir, 't', 'File');
+     my $absolute_dir1B = File::Spec->catdir($include_dir, 't');
 
- =>     my $absolute_file1 = File::Spec->catfile($include_dir, 't', 'File', 'Where.pm');
- =>     my $absolute_dir1A = File::Spec->catdir($include_dir, 't', 'File');
- =>     my $absolute_dir1B = File::Spec->catdir($include_dir, 't');
+     mkpath (File::Spec->catdir($test_script_dir, 't','File'));
+     my $absolute_file2 = File::Spec->catfile($test_script_dir, 't', 'File', 'Where.pm');
+     my $absolute_dir2A = File::Spec->catdir($include_dir, 't', 'File', 't', 'File');
+     my $absolute_dir2B = File::Spec->catdir($include_dir, 't', 'File', 't');
 
- =>     mkpath (File::Spec->catdir($test_script_dir, 't','File'));
- =>     my $absolute_file2 = File::Spec->catfile($test_script_dir, 't', 'File', 'Where.pm');
- =>     my $absolute_dir2A = File::Spec->catdir($include_dir, 't', 'File', 't', 'File');
- =>     my $absolute_dir2B = File::Spec->catdir($include_dir, 't', 'File', 't');
+     #####
+     # If doing a target site install, blib going to be up front in @INC
+     # Locate the include directory with high probability of having the
+     # first File::Where in the include path.
+     #
+     # Really not important that that cheapen test somewhat by doing a quasi
+     # where search in that using this to test for a boundary condition where
+     # the class, 'File::Where', is the same as the program module 'File::Where
+     # that the 'where' subroutine/method is locating.
+     #
+     my $absolute_dir_where = File::Spec->catdir($include_dir, 'lib');
+     foreach (@INC) {
+         if ($_ =~ /blib/) {
+             $absolute_dir_where = $_ ;
+             last;
+         }
+         elsif ($_ =~ /lib/) {
+             $absolute_dir_where = $_ ;
+             last;
+         }
+     }
+     my $absolute_file_where = File::Spec->catfile($absolute_dir_where, 'File', 'Where.pm');
 
- =>     #####
- =>     # If doing a target site install, blib going to be up front in @INC
- =>     # Locate the include directory with high probability of having the
- =>     # first File::Where in the include path.
- =>     #
- =>     # Really not important that that cheapen test somewhat by doing a quasi
- =>     # where search in that using this to test for a boundary condition where
- =>     # the class, 'File::Where', is the same as the program module 'File::Where
- =>     # that the 'where' subroutine/method is locating.
- =>     #
- =>     my $absolute_dir_where = File::Spec->catdir($include_dir, 'lib');
- =>     foreach (@INC) {
- =>         if ($_ =~ /blib/) {
- =>             $absolute_dir_where = $_ ;
- =>             last;
- =>         }
- =>         elsif ($_ =~ /lib/) {
- =>             $absolute_dir_where = $_ ;
- =>             last;
- =>         }
- =>     }
- =>     my $absolute_file_where = File::Spec->catfile($absolute_dir_where, 'File', 'Where.pm');
+     my @inc2 = ($test_script_dir, @INC);  # another way to do unshift
 
- =>     my @inc2 = ($test_script_dir, @INC);  # another way to do unshift
- =>     
- =>     copy $absolute_file1,$absolute_file2;
- =>     unshift @INC, $include_dir;    
+     copy $absolute_file1,$absolute_file2;
+     unshift @INC, $include_dir;    
 
- =>     my (@actual,$actual); # use for array and scalar context
- => my $errors = $fp->load_package('File::Where', 'where_pm')
- => $errors
- ''
+     my (@actual,$actual); # use for array and scalar context
 
- => $actual = $uut->pm2require( "$uut")
- 'File\Where.pm'
+ ##################
+ # Load UUT
+ # 
 
- => [@actual = $uut->where($relative_file)]
- [
-           'E:\User\SoftwareDiamonds\installation\t\File\Where.pm',
-           'E:\User\SoftwareDiamonds\installation',
-           't\File\Where.pm'
-         ]
+ my $errors = $fp->load_package('File::Where', 'where_pm')
+ $errors
 
- => $actual = $uut->where($relative_file)
- 'E:\User\SoftwareDiamonds\installation\t\File\Where.pm'
+ # ''
+ #
 
- => [@actual = $uut->where($relative_file, [$test_script_dir, $include_dir])]
- [
-           'E:\User\SoftwareDiamonds\installation\t\File\t\File\Where.pm',
-           'E:\User\SoftwareDiamonds\installation\t\File',
-           't\File\Where.pm'
-         ]
+ ##################
+ # pm2require
+ # 
 
- => [@actual = $uut->where($relative_dir1, '', 'nofile')]
- [
-           'E:\User\SoftwareDiamonds\installation\t\File',
-           'E:\User\SoftwareDiamonds\installation',
-           't\File'
-         ]
+ $actual = $uut->pm2require( 'File::Where')
 
- => $actual = $uut->where($relative_file, '', 'nofile')
- 'E:\User\SoftwareDiamonds\installation\t\File'
+ # 'File\Where.pm'
+ #
 
- => [@actual = $uut->where($relative_dir2, \@inc2, 'nofile')]
- [
-           'E:\User\SoftwareDiamonds\installation\t\File\t',
-           'E:\User\SoftwareDiamonds\installation\t\File',
-           't'
-         ]
+ ##################
+ # program modules('_Drivers_')
+ # 
 
- => $actual = $uut->where('t', [$test_script_dir,@INC], 'nofile')
- 'E:\User\SoftwareDiamonds\installation\t\File\t'
+ [my @drivers = sort $uut->program_modules( '_Drivers_' )]
 
- => [@actual = $uut->where_file($relative_file)]
- [
-           'E:\User\SoftwareDiamonds\installation\t\File\Where.pm',
-           'E:\User\SoftwareDiamonds\installation',
-           't\File\Where.pm'
-         ]
+ # [
+ #          'Driver',
+ #          'Generate',
+ #          'IO'
+ #        ]
+ #
 
- => $actual = $uut->where_file($relative_file, $test_script_dir, $include_dir)
- 'E:\User\SoftwareDiamonds\installation\t\File\t\File\Where.pm'
+ ##################
+ # is_module('dri', Driver Generate IO)
+ # 
 
- => [@actual = $uut->where_dir($relative_dir1, \@inc2)]
- [
-           'E:\User\SoftwareDiamonds\installation\t\File\t\File',
-           'E:\User\SoftwareDiamonds\installation\t\File',
-           't\File'
-         ]
+ $uut->is_module('dri', @drivers )
 
- => [@actual = $uut->where_dir($relative_dir2, $test_script_dir)]
- [
-           'E:\User\SoftwareDiamonds\installation\t\File\t',
-           'E:\User\SoftwareDiamonds\installation\t\File',
-           't'
-         ]
+ # 'Driver'
+ #
 
- => $actual = $uut->where_dir($relative_file)
- 'E:\User\SoftwareDiamonds\installation\t\File'
+ ##################
+ # repository_pms('t::File::_Drivers_')
+ # 
 
- => [@actual= $uut->where_pm( 't::File::Where' )]
- [
-           'E:\User\SoftwareDiamonds\installation\t\File\Where.pm',
-           'E:\User\SoftwareDiamonds\installation',
-           't\File\Where.pm'
-         ]
+ [@drivers = sort $uut->repository_pms( 't::File::_Drivers_' )]
 
- => $actual = $uut->where_pm( 't::File::Where', @inc2)
- 'E:\User\SoftwareDiamonds\installation\t\File\t\File\Where.pm'
+ # [
+ #          'Driver',
+ #          'Generate',
+ #          'IO'
+ #        ]
+ #
 
- => $actual = $uut->where_pm( 'File::Where')
- 'E:\User\SoftwareDiamonds\installation\lib\File\Where.pm'
+ ##################
+ # dir_pms( '_Drivers_' )
+ # 
 
- => [@actual= $uut->where_pm( 't::File::Where', [$test_script_dir])]
- [
-           'E:\User\SoftwareDiamonds\installation\t\File\t\File\Where.pm',
-           'E:\User\SoftwareDiamonds\installation\t\File',
-           't\File\Where.pm'
-         ]
+ [@drivers = sort $uut->dir_pms( '_Drivers_' )]
 
- => [@actual= $uut->where_repository( 't::File' )]
- [
-           'E:\User\SoftwareDiamonds\installation\t\File',
-           'E:\User\SoftwareDiamonds\installation',
-           't\File'
-         ]
+ # [
+ #          'Driver',
+ #          'Generate',
+ #          'IO'
+ #        ]
+ #
 
- => $actual = $uut->where_repository( 't::File', @inc2)
- 'E:\User\SoftwareDiamonds\installation\t\File\t\File'
+ ##################
+ # where finding a file, array context, path absent
+ # 
 
- => [@actual= $uut->where_repository( 't::Jolly_Green_Giant', [$test_script_dir])]
- [
-           'E:\User\SoftwareDiamonds\installation\t\File\t',
-           'E:\User\SoftwareDiamonds\installation\t\File',
-           't'
-         ]
+ [@actual = $uut->where($relative_file)]
 
- =>    @INC = @restore_inc; #restore @INC;
- =>    rmtree 't';
+ # [
+ #          'E:\User\SoftwareDiamonds\installation\t\File\Where.pm',
+ #          'E:\User\SoftwareDiamonds\installation',
+ #          't\File\Where.pm'
+ #        ]
+ #
+
+ ##################
+ # where finding a file, scalar context, path absent
+ # 
+
+ $actual = $uut->where($relative_file)
+
+ # 'E:\User\SoftwareDiamonds\installation\t\File\Where.pm'
+ #
+
+ ##################
+ # where finding a file, array context, array reference path
+ # 
+
+ [@actual = $uut->where($relative_file, [$test_script_dir, $include_dir])]
+
+ # [
+ #          'E:\User\SoftwareDiamonds\installation\t\File\t\File\Where.pm',
+ #          'E:\User\SoftwareDiamonds\installation\t\File',
+ #          't\File\Where.pm'
+ #        ]
+ #
+
+ ##################
+ # where finding a dir, array context, path absent
+ # 
+
+ [@actual = $uut->where($relative_dir1, '', 'nofile')]
+
+ # [
+ #          'E:\User\SoftwareDiamonds\installation\t\File',
+ #          'E:\User\SoftwareDiamonds\installation',
+ #          't\File'
+ #        ]
+ #
+
+ ##################
+ # where finding a dir, scalar context, path absent
+ # 
+
+ $actual = $uut->where($relative_file, '', 'nofile')
+
+ # 'E:\User\SoftwareDiamonds\installation\t\File'
+ #
+
+ ##################
+ # where finding a dir, array context, array reference path
+ # 
+
+ [@actual = $uut->where($relative_dir2, \@inc2, 'nofile')]
+
+ # [
+ #          'E:\User\SoftwareDiamonds\installation\t\File\t',
+ #          'E:\User\SoftwareDiamonds\installation\t\File',
+ #          't'
+ #        ]
+ #
+
+ ##################
+ # where finding a dir, scalar context, array reference path
+ # 
+
+ $actual = $uut->where('t', [$test_script_dir,@INC], 'nofile')
+
+ # 'E:\User\SoftwareDiamonds\installation\t\File\t'
+ #
+
+ ##################
+ # where_file, array context, path absent
+ # 
+
+ [@actual = $uut->where_file($relative_file)]
+
+ # [
+ #          'E:\User\SoftwareDiamonds\installation\t\File\Where.pm',
+ #          'E:\User\SoftwareDiamonds\installation',
+ #          't\File\Where.pm'
+ #        ]
+ #
+
+ ##################
+ # where_file, scalar context, array path
+ # 
+
+ $actual = $uut->where_file($relative_file, $test_script_dir, $include_dir)
+
+ # 'E:\User\SoftwareDiamonds\installation\t\File\t\File\Where.pm'
+ #
+
+ ##################
+ # where_dir, array context, array reference
+ # 
+
+ [@actual = $uut->where_dir($relative_dir1, \@inc2)]
+
+ # [
+ #          'E:\User\SoftwareDiamonds\installation\t\File\t\File',
+ #          'E:\User\SoftwareDiamonds\installation\t\File',
+ #          't\File'
+ #        ]
+ #
+
+ ##################
+ # where_dir, array context, array reference
+ # 
+
+ [@actual = $uut->where_dir($relative_dir2, $test_script_dir)]
+
+ # [
+ #          'E:\User\SoftwareDiamonds\installation\t\File\t',
+ #          'E:\User\SoftwareDiamonds\installation\t\File',
+ #          't'
+ #        ]
+ #
+
+ ##################
+ # where_dir, scalar context, path absent
+ # 
+
+ $actual = $uut->where_dir($relative_file)
+
+ # 'E:\User\SoftwareDiamonds\installation\t\File'
+ #
+
+ ##################
+ # where_pm, array context, path absent
+ # 
+
+ [@actual= $uut->where_pm( 't::File::Where' )]
+
+ # [
+ #          'E:\User\SoftwareDiamonds\installation\t\File\Where.pm',
+ #          'E:\User\SoftwareDiamonds\installation',
+ #          't\File\Where.pm'
+ #        ]
+ #
+
+ ##################
+ # where_pm, scalar context, array path
+ # 
+
+ $actual = $uut->where_pm( 't::File::Where', @inc2)
+
+ # 'E:\User\SoftwareDiamonds\installation\t\File\t\File\Where.pm'
+ #
+
+ ##################
+ # where_pm, File::Where boundary case
+ # 
+
+ $actual = $uut->where_pm( 'File::Where')
+
+ # 'E:\User\SoftwareDiamonds\installation\lib\File\Where.pm'
+ #
+
+ ##################
+ # where_pm subroutine, array context, array reference path
+ # 
+
+ [@actual= $uut->where_pm( 't::File::Where', [$test_script_dir])]
+
+ # [
+ #          'E:\User\SoftwareDiamonds\installation\t\File\t\File\Where.pm',
+ #          'E:\User\SoftwareDiamonds\installation\t\File',
+ #          't\File\Where.pm'
+ #        ]
+ #
+
+ ##################
+ # where_repository, array context, path absent
+ # 
+
+ [@actual= $uut->where_repository( 't::File' )]
+
+ # [
+ #          'E:\User\SoftwareDiamonds\installation\t\File',
+ #          'E:\User\SoftwareDiamonds\installation',
+ #          't\File'
+ #        ]
+ #
+
+ ##################
+ # where_repository, scalar context, array path
+ # 
+
+ $actual = $uut->where_repository( 't::File', @inc2)
+
+ # 'E:\User\SoftwareDiamonds\installation\t\File\t\File'
+ #
+
+ ##################
+ # where_repository, array context, array reference path
+ # 
+
+ [@actual= $uut->where_repository( 't::Jolly_Green_Giant', [$test_script_dir])]
+
+ # [
+ #          'E:\User\SoftwareDiamonds\installation\t\File\t',
+ #          'E:\User\SoftwareDiamonds\installation\t\File',
+ #          't'
+ #        ]
+ #
+    @INC = @restore_inc; #restore @INC;
+    rmtree 't';
 
 =head1 QUALITY ASSURANCE
 
-Running the test script 'Where.t' found in
-the "File-Where-$VERSION.tar.gz" distribution file verifies
+Running the test script C<Where.t> verifies
 the requirements for this module.
 
-All testing software and documentation
-stems from the 
-Software Test Description (L<STD|Docs::US_DOD::STD>)
-program module 't::File::Where',
-found in the distribution file 
-"File-Where-$VERSION.tar.gz". 
-
-The 't::File::Where' L<STD|Docs::US_DOD::STD> POD contains
-a tracebility matix between the
-requirements established above for this module, and
-the test steps identified by a
-'ok' number from running the 'Where.t'
-test script.
-
-The t::File::Where' L<STD|Docs::US_DOD::STD>
-program module '__DATA__' section contains the data 
-to perform the following:
-
-=over 4
-
-=item *
-
-to generate the test script 'Where.t'
-
-=item *
-
-generate the tailored 
-L<STD|Docs::US_DOD::STD> POD in
-the 't::File::Where' module, 
-
-=item *
-
-generate the 'Where.d' demo script, 
-
-=item *
-
-replace the POD demonstration section
-herein with the demo script
-'Where.d' output, and
-
-=item *
-
-run the test script using Test::Harness
-with or without the verbose option,
-
-=back
-
-To perform all the above, prepare
-and run the automation software as 
-follows:
-
-=over 4
-
-=item *
-
-Install "Test_STDmaker-$VERSION.tar.gz"
-from one of the respositories only
-if it has not been installed:
-
-=over 4
-
-=item *
-
-http://www.softwarediamonds/packages/
-
-=item *
-
-http://www.perl.com/CPAN-local/authors/id/S/SO/SOFTDIA/
-
-=back
-  
-=item *
-
-manually place the script tmake.pl
-in "Test_STDmaker-$VERSION.tar.gz' in
-the site operating system executable 
-path only if it is not in the 
-executable path
-
-=item *
-
-place the 't::File::Where' at the same
-level in the directory struture as the
-directory holding the 'File::Where'
-module
-
-=item *
-
-execute the following in any directory:
-
- tmake -test_verbose -replace -run -pm=t::File::Where
-
-=back
+The C<tmake.pl> cover script for L<Test::STDmaker|Test::STDmaker>
+automatically generated the
+C<Where.t> test script, C<Where.d> demo script,
+and C<t::Data::Where> program module POD,
+from the C<t::Data::Where> program module contents.
+The C<t::Data::Where> program module
+is in the distribution file
+F<Data-Where-$VERSION.tar.gz>.
 
 =head1 NOTES
 
-=head2 FILES
-
-The installation of the
-"File-Where-$VERSION.tar.gz" distribution file
-installs the 'Docs::Site_SVD::File_Where'
-L<SVD|Docs::US_DOD::SVD> program module.
-
-The __DATA__ data section of the 
-'Docs::Site_SVD::File_Where' contains all
-the necessary data to generate the POD
-section of 'Docs::Site_SVD::File_Where' and
-the "File-Where-$VERSION.tar.gz" distribution file.
-
-To make use of the 
-'Docs::Site_SVD::File_Where'
-L<SVD|Docs::US_DOD::SVD> program module,
-perform the following:
-
-=over 4
-
-=item *
-
-install "ExtUtils-SVDmaker-$VERSION.tar.gz"
-from one of the respositories only
-if it has not been installed:
-
-=over 4
-
-=item *
-
-http://www.softwarediamonds/packages/
-
-=item *
-
-http://www.perl.com/CPAN-local/authors/id/S/SO/SOFTDIA/
-
-=back
-
-=item *
-
-manually place the script vmake.pl
-in "ExtUtils-SVDmaker-$VERSION.tar.gz' in
-the site operating system executable 
-path only if it is not in the 
-executable path
-
-=item *
-
-Make any appropriate changes to the
-__DATA__ section of the 'Docs::Site_SVD::File_Where'
-module.
-For example, any changes to
-'File::Where' will impact the
-at least 'Changes' field.
-
-=item *
-
-Execute the following:
-
- vmake readme_html all -pm=Docs::Site_SVD::File_Where
-
-=back
-
-=head2 AUTHOR
+=head2 Author
 
 The holder of the copyright and maintainer is
 
 E<lt>support@SoftwareDiamonds.comE<gt>
 
-=head2 COPYRIGHT NOTICE
+=head2 Copyright Notice
 
 Copyrighted (c) 2002 Software Diamonds
 
 All Rights Reserved
 
-=head2 BINDING REQUIREMENTS NOTICE
+=head2 Binding Requirements Notice
 
 Binding requirements are indexed with the
 pharse 'shall[dd]' where dd is an unique number
 for each header section.
 This conforms to standard federal
-government practices, 490A (L<STD490A/3.2.3.6>).
+government practices, L<STD490A 3.2.3.6|Docs::US_DOD::STD490A/3.2.3.6>.
 In accordance with the License, Software Diamonds
 is not liable for any requirement, binding or otherwise.
 
-=head2 LICENSE
+=head2 License
 
 Software Diamonds permits the redistribution
 and use in source and binary forms, with or
@@ -758,7 +919,7 @@ distribution.
 
 =back
 
-SOFTWARE DIAMONDS, http::www.softwarediamonds.com,
+SOFTWARE DIAMONDS, http://www.softwarediamonds.com,
 PROVIDES THIS SOFTWARE 
 'AS IS' AND ANY EXPRESS OR IMPLIED WARRANTIES,
 INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
@@ -775,24 +936,15 @@ OR TORT (INCLUDING USE OF THIS SOFTWARE, EVEN IF
 ADVISED OF NEGLIGENCE OR OTHERWISE) ARISING IN
 ANY WAY OUT OF THE POSSIBILITY OF SUCH DAMAGE. 
 
+=head1 SEE ALSO
 
-=for html
-<p><br>
-<!-- BLK ID="NOTICE" -->
-<!-- /BLK -->
-<p><br>
-<!-- BLK ID="OPT-IN" -->
-<!-- /BLK -->
-<p><br>
-<!-- BLK ID="EMAIL" -->
-<!-- /BLK -->
-<p><br>
-<!-- BLK ID="COPYRIGHT" -->
-<!-- /BLK -->
-<p><br>
-<!-- BLK ID="LOG_CGI" -->
-<!-- /BLK -->
-<p><br>
+=over 4
+
+=item L<Docs::Site_SVD::Data_Where|Docs::Site_SVD::Data_Where>
+
+=item L<Test::STDmaker|Test::STDmaker> 
+
+=back
 
 =cut
 

@@ -7,13 +7,13 @@ use warnings;
 use warnings::register;
 
 use vars qw($VERSION $DATE);
-$VERSION = '0.03';   # automatically generated file
-$DATE = '2004/04/09';
+$VERSION = '0.04';   # automatically generated file
+$DATE = '2004/05/04';
 
 
 ##### Demonstration Script ####
 #
-# Name: where.d
+# Name: Where.d
 #
 # UUT: File::Where
 #
@@ -41,7 +41,7 @@ BEGIN {
     use Cwd;
     use File::Spec;
     use FindBin;
-    use Test::Tech qw(tech_config plan demo skip_tests);
+    use Test::Tech qw(demo is_skip plan skip_tests tech_config );
 
     ########
     # The working directory for this script file is the directory where
@@ -81,19 +81,15 @@ END {
 
 print << 'MSG';
 
- ~~~~~~ Demonstration overview ~~~~~
+~~~~~~ Demonstration overview ~~~~~
  
-Perl code begins with the prompt
+The results from executing the Perl Code 
+follow on the next lines as comments. For example,
 
- =>
+ 2 + 2
+ # 4
 
-The selected results from executing the Perl Code 
-follow on the next lines. For example,
-
- => 2 + 2
- 4
-
- ~~~~~~ The demonstration follows ~~~~~
+~~~~~~ The demonstration follows ~~~~~
 
 MSG
 
@@ -236,6 +232,14 @@ demo( "\ \ \ \ use\ File\:\:Spec\;\
 
     my (@actual,$actual); # use for array and scalar context; # execution
 
+print << "EOF";
+
+ ##################
+ # Load UUT
+ # 
+ 
+EOF
+
 demo( "my\ \$errors\ \=\ \$fp\-\>load_package\(\'File\:\:Where\'\,\ \'where_pm\'\)"); # typed in command           
       my $errors = $fp->load_package('File::Where', 'where_pm'); # execution
 
@@ -243,81 +247,289 @@ demo( "\$errors", # typed in command
       $errors # execution
 ) unless     $loaded; # condition for execution                            
 
-demo( "\$actual\ \=\ \$uut\-\>pm2require\(\ \"\$uut\"\)", # typed in command           
-      $actual = $uut->pm2require( "$uut")); # execution
+print << "EOF";
 
+ ##################
+ # pm2require
+ # 
+ 
+EOF
+
+demo( "\$actual\ \=\ \$uut\-\>pm2require\(\ \'File\:\:Where\'\)", # typed in command           
+      $actual = $uut->pm2require( 'File::Where')); # execution
+
+
+print << "EOF";
+
+ ##################
+ # program modules('_Drivers_')
+ # 
+ 
+EOF
+
+demo( "\[my\ \@drivers\ \=\ sort\ \$uut\-\>program_modules\(\ \'_Drivers_\'\ \)\]", # typed in command           
+      [my @drivers = sort $uut->program_modules( '_Drivers_' )]); # execution
+
+
+print << "EOF";
+
+ ##################
+ # is_module('dri', @drivers)
+ # 
+ 
+EOF
+
+demo( "\$uut\-\>is_module\(\'dri\'\,\ \@drivers\ \)", # typed in command           
+      $uut->is_module('dri', @drivers )); # execution
+
+
+print << "EOF";
+
+ ##################
+ # repository_pms('t::File::_Drivers_')
+ # 
+ 
+EOF
+
+demo( "\[\@drivers\ \=\ sort\ \$uut\-\>repository_pms\(\ \'t\:\:File\:\:_Drivers_\'\ \)\]", # typed in command           
+      [@drivers = sort $uut->repository_pms( 't::File::_Drivers_' )]); # execution
+
+
+print << "EOF";
+
+ ##################
+ # dir_pms( '_Drivers_' )
+ # 
+ 
+EOF
+
+demo( "\[\@drivers\ \=\ sort\ \$uut\-\>dir_pms\(\ \'_Drivers_\'\ \)\]", # typed in command           
+      [@drivers = sort $uut->dir_pms( '_Drivers_' )]); # execution
+
+
+print << "EOF";
+
+ ##################
+ # where finding a file, array context, path absent
+ # 
+ 
+EOF
 
 demo( "\[\@actual\ \=\ \$uut\-\>where\(\$relative_file\)\]", # typed in command           
       [@actual = $uut->where($relative_file)]); # execution
 
 
+print << "EOF";
+
+ ##################
+ # where finding a file, scalar context, path absent
+ # 
+ 
+EOF
+
 demo( "\$actual\ \=\ \$uut\-\>where\(\$relative_file\)", # typed in command           
       $actual = $uut->where($relative_file)); # execution
 
+
+print << "EOF";
+
+ ##################
+ # where finding a file, array context, array reference path
+ # 
+ 
+EOF
 
 demo( "\[\@actual\ \=\ \$uut\-\>where\(\$relative_file\,\ \[\$test_script_dir\,\ \$include_dir\]\)\]", # typed in command           
       [@actual = $uut->where($relative_file, [$test_script_dir, $include_dir])]); # execution
 
 
+print << "EOF";
+
+ ##################
+ # where finding a dir, array context, path absent
+ # 
+ 
+EOF
+
 demo( "\[\@actual\ \=\ \$uut\-\>where\(\$relative_dir1\,\ \'\'\,\ \'nofile\'\)\]", # typed in command           
       [@actual = $uut->where($relative_dir1, '', 'nofile')]); # execution
 
+
+print << "EOF";
+
+ ##################
+ # where finding a dir, scalar context, path absent
+ # 
+ 
+EOF
 
 demo( "\$actual\ \=\ \$uut\-\>where\(\$relative_file\,\ \'\'\,\ \'nofile\'\)", # typed in command           
       $actual = $uut->where($relative_file, '', 'nofile')); # execution
 
 
+print << "EOF";
+
+ ##################
+ # where finding a dir, array context, array reference path
+ # 
+ 
+EOF
+
 demo( "\[\@actual\ \=\ \$uut\-\>where\(\$relative_dir2\,\ \\\@inc2\,\ \'nofile\'\)\]", # typed in command           
       [@actual = $uut->where($relative_dir2, \@inc2, 'nofile')]); # execution
 
+
+print << "EOF";
+
+ ##################
+ # where finding a dir, scalar context, array reference path
+ # 
+ 
+EOF
 
 demo( "\$actual\ \=\ \$uut\-\>where\(\'t\'\,\ \[\$test_script_dir\,\@INC\]\,\ \'nofile\'\)", # typed in command           
       $actual = $uut->where('t', [$test_script_dir,@INC], 'nofile')); # execution
 
 
+print << "EOF";
+
+ ##################
+ # where_file, array context, path absent
+ # 
+ 
+EOF
+
 demo( "\[\@actual\ \=\ \$uut\-\>where_file\(\$relative_file\)\]", # typed in command           
       [@actual = $uut->where_file($relative_file)]); # execution
 
+
+print << "EOF";
+
+ ##################
+ # where_file, scalar context, array path
+ # 
+ 
+EOF
 
 demo( "\$actual\ \=\ \$uut\-\>where_file\(\$relative_file\,\ \$test_script_dir\,\ \$include_dir\)", # typed in command           
       $actual = $uut->where_file($relative_file, $test_script_dir, $include_dir)); # execution
 
 
+print << "EOF";
+
+ ##################
+ # where_dir, array context, array reference
+ # 
+ 
+EOF
+
 demo( "\[\@actual\ \=\ \$uut\-\>where_dir\(\$relative_dir1\,\ \\\@inc2\)\]", # typed in command           
       [@actual = $uut->where_dir($relative_dir1, \@inc2)]); # execution
 
+
+print << "EOF";
+
+ ##################
+ # where_dir, array context, array reference
+ # 
+ 
+EOF
 
 demo( "\[\@actual\ \=\ \$uut\-\>where_dir\(\$relative_dir2\,\ \$test_script_dir\)\]", # typed in command           
       [@actual = $uut->where_dir($relative_dir2, $test_script_dir)]); # execution
 
 
+print << "EOF";
+
+ ##################
+ # where_dir, scalar context, path absent
+ # 
+ 
+EOF
+
 demo( "\$actual\ \=\ \$uut\-\>where_dir\(\$relative_file\)", # typed in command           
       $actual = $uut->where_dir($relative_file)); # execution
 
+
+print << "EOF";
+
+ ##################
+ # where_pm, array context, path absent
+ # 
+ 
+EOF
 
 demo( "\[\@actual\=\ \$uut\-\>where_pm\(\ \'t\:\:File\:\:Where\'\ \)\]", # typed in command           
       [@actual= $uut->where_pm( 't::File::Where' )]); # execution
 
 
+print << "EOF";
+
+ ##################
+ # where_pm, scalar context, array path
+ # 
+ 
+EOF
+
 demo( "\$actual\ \=\ \$uut\-\>where_pm\(\ \'t\:\:File\:\:Where\'\,\ \@inc2\)", # typed in command           
       $actual = $uut->where_pm( 't::File::Where', @inc2)); # execution
 
+
+print << "EOF";
+
+ ##################
+ # where_pm, File::Where boundary case
+ # 
+ 
+EOF
 
 demo( "\$actual\ \=\ \$uut\-\>where_pm\(\ \'File\:\:Where\'\)", # typed in command           
       $actual = $uut->where_pm( 'File::Where')); # execution
 
 
+print << "EOF";
+
+ ##################
+ # where_pm subroutine, array context, array reference path
+ # 
+ 
+EOF
+
 demo( "\[\@actual\=\ \$uut\-\>where_pm\(\ \'t\:\:File\:\:Where\'\,\ \[\$test_script_dir\]\)\]", # typed in command           
       [@actual= $uut->where_pm( 't::File::Where', [$test_script_dir])]); # execution
 
+
+print << "EOF";
+
+ ##################
+ # where_repository, array context, path absent
+ # 
+ 
+EOF
 
 demo( "\[\@actual\=\ \$uut\-\>where_repository\(\ \'t\:\:File\'\ \)\]", # typed in command           
       [@actual= $uut->where_repository( 't::File' )]); # execution
 
 
+print << "EOF";
+
+ ##################
+ # where_repository, scalar context, array path
+ # 
+ 
+EOF
+
 demo( "\$actual\ \=\ \$uut\-\>where_repository\(\ \'t\:\:File\'\,\ \@inc2\)", # typed in command           
       $actual = $uut->where_repository( 't::File', @inc2)); # execution
 
+
+print << "EOF";
+
+ ##################
+ # where_repository, array context, array reference path
+ # 
+ 
+EOF
 
 demo( "\[\@actual\=\ \$uut\-\>where_repository\(\ \'t\:\:Jolly_Green_Giant\'\,\ \[\$test_script_dir\]\)\]", # typed in command           
       [@actual= $uut->where_repository( 't::Jolly_Green_Giant', [$test_script_dir])]); # execution
@@ -331,11 +543,11 @@ demo( "\ \ \ \@INC\ \=\ \@restore_inc\;\ \#restore\ \@INC\;\
 
 =head1 NAME
 
-where.d - demostration script for File::Where
+Where.d - demostration script for File::Where
 
 =head1 SYNOPSIS
 
- where.d
+ Where.d
 
 =head1 OPTIONS
 

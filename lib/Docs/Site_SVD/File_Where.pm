@@ -10,26 +10,28 @@ use warnings;
 use warnings::register;
 
 use vars qw($VERSION $DATE $FILE );
-$VERSION = '0.04';
-$DATE = '2004/04/09';
+$VERSION = '0.05';
+$DATE = '2004/05/04';
 $FILE = __FILE__;
 
 use vars qw(%INVENTORY);
 %INVENTORY = (
-    'lib/Docs/Site_SVD/File_Where.pm' => [qw(0.04 2004/04/09), 'revised 0.03'],
-    'MANIFEST' => [qw(0.04 2004/04/09), 'generated, replaces 0.03'],
-    'Makefile.PL' => [qw(0.04 2004/04/09), 'generated, replaces 0.03'],
-    'README' => [qw(0.04 2004/04/09), 'generated, replaces 0.03'],
-    'lib/File/Where.pm' => [qw(1.15 2004/04/09), 'revised 1.14'],
-    't/File/where.d' => [qw(0.03 2004/04/09), 'revised 0.02'],
-    't/File/Where.pm' => [qw(0.03 2004/04/09), 'revised 0.02'],
-    't/File/where.t' => [qw(0.03 2004/04/09), 'revised 0.02'],
-    't/File/where.d' => [qw(0.03 2004/04/08), 'unchanged'],
-    't/File/Where.pm' => [qw(0.03 2004/04/08), 'unchanged'],
-    't/File/where.t' => [qw(0.03 2004/04/08), 'unchanged'],
-    't/File/File/Package.pm' => [qw(1.15 2004/04/09), 'revised 1.14'],
-    't/File/Test/Tech.pm' => [qw(1.17 2004/04/09), 'unchanged'],
-    't/File/Data/Secs2.pm' => [qw(1.15 2004/04/09), 'unchanged'],
+    'lib/Docs/Site_SVD/File_Where.pm' => [qw(0.05 2004/05/04), 'revised 0.04'],
+    'MANIFEST' => [qw(0.05 2004/05/04), 'generated, replaces 0.04'],
+    'Makefile.PL' => [qw(0.05 2004/05/04), 'generated, replaces 0.04'],
+    'README' => [qw(0.05 2004/05/04), 'generated, replaces 0.04'],
+    'lib/File/Where.pm' => [qw(1.16 2004/05/04), 'revised 1.15'],
+    't/File/Where.d' => [qw(0.04 2004/05/04), 'revised 0.03'],
+    't/File/Where.pm' => [qw(0.04 2004/05/04), 'revised 0.03'],
+    't/File/Where.t' => [qw(0.04 2004/05/04), 'revised 0.03'],
+    't/File/_Drivers_/Driver.pm' => [qw(0.02 2004/05/04), 'new'],
+    't/File/_Drivers_/Generate.pm' => [qw(0.02 2004/05/04), 'new'],
+    't/File/_Drivers_/IO.pm' => [qw(0.02 2004/05/04), 'new'],
+    't/File/File/Package.pm' => [qw(1.16 2004/05/04), 'revised 1.15'],
+    't/File/Test/Tech.pm' => [qw(1.22 2004/05/04), 'revised 1.17'],
+    't/File/Data/Secs2.pm' => [qw(1.19 2004/05/04), 'revised 1.15'],
+    't/File/Data/SecsPack.pm' => [qw(0.04 2004/05/04), 'new'],
+    't/File/Data/Startup.pm' => [qw(0.04 2004/05/04), 'new'],
 
 );
 
@@ -56,15 +58,15 @@ use vars qw(%INVENTORY);
 
   File::Where - find the absolute file for a program module; dir for a repository
 
- Revision: B
+ Revision: D
 
- Version: 0.04
+ Version: 0.05
 
- Date: 2004/04/09
+ Date: 2004/05/04
 
  Prepared for: General Public 
 
- Prepared by:  SoftwareDiamonds.com E<lt>support@SoftwareDiamonds.comE<gt>
+ Prepared by:  SoftwareDiamonds.com E<lt> support@SoftwareDiamonds.com E<gt>
 
  Copyright: copyright © 2003 Software Diamonds
 
@@ -97,7 +99,7 @@ supercedes the File::PM2File program module.
 
 =head2 1.3 Document overview.
 
-This document releases File::Where version 0.04
+This document releases File::Where version 0.05
 providing a description of the inventory, installation
 instructions and other information necessary to
 utilize and track this release.
@@ -112,12 +114,12 @@ system file specification.
 
 This document releases the file 
 
- File-Where-0.04.tar.gz
+ File-Where-0.05.tar.gz
 
 found at the following repository(s):
 
   http://www.softwarediamonds/packages/
-  http://www.perl.com/CPAN-local/authors/id/S/SO/SOFTDIA/
+  http://www.perl.com/CPAN/authors/id/S/SO/SOFTDIA/
 
 Restrictions regarding duplication and license provisions
 are as follows:
@@ -184,20 +186,22 @@ consists of the following files:
 
  file                                                         version date       comment
  ------------------------------------------------------------ ------- ---------- ------------------------
- lib/Docs/Site_SVD/File_Where.pm                              0.04    2004/04/09 revised 0.03
- MANIFEST                                                     0.04    2004/04/09 generated, replaces 0.03
- Makefile.PL                                                  0.04    2004/04/09 generated, replaces 0.03
- README                                                       0.04    2004/04/09 generated, replaces 0.03
- lib/File/Where.pm                                            1.15    2004/04/09 revised 1.14
- t/File/where.d                                               0.03    2004/04/09 revised 0.02
- t/File/Where.pm                                              0.03    2004/04/09 revised 0.02
- t/File/where.t                                               0.03    2004/04/09 revised 0.02
- t/File/where.d                                               0.03    2004/04/08 unchanged
- t/File/Where.pm                                              0.03    2004/04/08 unchanged
- t/File/where.t                                               0.03    2004/04/08 unchanged
- t/File/File/Package.pm                                       1.15    2004/04/09 revised 1.14
- t/File/Test/Tech.pm                                          1.17    2004/04/09 unchanged
- t/File/Data/Secs2.pm                                         1.15    2004/04/09 unchanged
+ lib/Docs/Site_SVD/File_Where.pm                              0.05    2004/05/04 revised 0.04
+ MANIFEST                                                     0.05    2004/05/04 generated, replaces 0.04
+ Makefile.PL                                                  0.05    2004/05/04 generated, replaces 0.04
+ README                                                       0.05    2004/05/04 generated, replaces 0.04
+ lib/File/Where.pm                                            1.16    2004/05/04 revised 1.15
+ t/File/Where.d                                               0.04    2004/05/04 revised 0.03
+ t/File/Where.pm                                              0.04    2004/05/04 revised 0.03
+ t/File/Where.t                                               0.04    2004/05/04 revised 0.03
+ t/File/_Drivers_/Driver.pm                                   0.02    2004/05/04 new
+ t/File/_Drivers_/Generate.pm                                 0.02    2004/05/04 new
+ t/File/_Drivers_/IO.pm                                       0.02    2004/05/04 new
+ t/File/File/Package.pm                                       1.16    2004/05/04 revised 1.15
+ t/File/Test/Tech.pm                                          1.22    2004/05/04 revised 1.17
+ t/File/Data/Secs2.pm                                         1.19    2004/05/04 revised 1.15
+ t/File/Data/SecsPack.pm                                      0.04    2004/05/04 new
+ t/File/Data/Startup.pm                                       0.04    2004/05/04 new
 
 
 =head2 3.3 Changes
@@ -263,6 +267,15 @@ that the 'where' subroutine/method is locating.
 There are plenty of successful test where C<where> finds
 directories and files as expected.
 
+=item File-Where-0.05
+
+Rework the POD NOTES and QUALITY ASSURANCE sections.
+
+=item File-Where-0.06
+
+Added the C<is_module>, C<program_modules>, C<repository_pms> and
+C<dir_pms> subroutines.
+
 =back
 
 =head2 3.4 Adaptation data.
@@ -299,15 +312,15 @@ If all else fails, the file may be manually installed.
 Enter one of the following repositories in a web browser:
 
   http://www.softwarediamonds/packages/
-  http://www.perl.com/CPAN-local/authors/id/S/SO/SOFTDIA/
+  http://www.perl.com/CPAN/authors/id/S/SO/SOFTDIA/
 
-Right click on 'File-Where-0.04.tar.gz' and download to a temporary
+Right click on 'File-Where-0.05.tar.gz' and download to a temporary
 installation directory.
 Enter the following where $make is 'nmake' for microsoft
 windows; otherwise 'make'.
 
- gunzip File-Where-0.04.tar.gz
- tar -xf File-Where-0.04.tar
+ gunzip File-Where-0.05.tar.gz
+ tar -xf File-Where-0.05.tar
  perl Makefile.PL
  $make test
  $make install
@@ -332,7 +345,7 @@ None.
 Most Perl installation software will run the following test script(s)
 as part of the installation:
 
- t/File/where.t
+ t/File/Where.t
 
 =item Installation support.
 
@@ -423,20 +436,22 @@ __DATA__
 DISTNAME: File-Where^
 REPOSITORY_DIR: packages^
 
-VERSION : 0.04^
+VERSION : 0.05^
 FREEZE: 1^
 PREVIOUS_DISTNAME:  ^
-PREVIOUS_RELEASE: 0.03^
-REVISION: B^
+PREVIOUS_RELEASE: 0.04^
+REVISION: D^
 
-AUTHOR  : SoftwareDiamonds.com E<lt>support@SoftwareDiamonds.comE<gt>^
+AUTHOR  : SoftwareDiamonds.com E<lt> support@SoftwareDiamonds.com E<gt>^
 
 ABSTRACT: 
-The subroutines in File::Where program module finds the absolute file or dir for a
+The subroutines in C<File::Where> program module finds the absolute file or dir for a
 program module, program module repository, relative file, or relative directory
 by searching the directories in the @INC array of directories or an
-override array of directories. The File::Where supercedes the File::PM2File
-program module.
+override array of directories. The C<File::Where> program module also contains
+subroutines to find all the program modules in a repository or directory.
+The File::Where supercedes the C<File::PM2File>
+program module and the C,File::SubPM program module>.
 ^
 
 TITLE   :  File::Where - find the absolute file for a program module; dir for a repository^
@@ -449,7 +464,7 @@ SVD_FSPEC: Unix^
 
 REPOSITORY: 
   http://www.softwarediamonds/packages/
-  http://www.perl.com/CPAN-local/authors/id/S/SO/SOFTDIA/
+  http://www.perl.com/CPAN/authors/id/S/SO/SOFTDIA/
 ^
 
 COMPRESS: gzip^
@@ -461,15 +476,17 @@ CHANGE2CURRENT:  ^
 AUTO_REVISE: 
 lib/File/Where.pm
 t/File/Where.*
-t/File/where.*
+t/File/_Drivers_/*
 lib/File/Package.pm => t/File/File/Package.pm
 lib/Test/Tech.pm => t/File/Test/Tech.pm
 lib/Data/Secs2.pm => t/File/Data/Secs2.pm
+lib/Data/SecsPack.pm => t/File/Data/SecsPack.pm
+lib/Data/Startup.pm => t/File/Data/Startup.pm
 ^
 
 PREREQ_PM:  ^
 README_PODS: lib/File/Where.pm^
-TESTS: t/File/where.t^
+TESTS: t/File/Where.t^
 EXE_FILES:  ^
 
 CHANGES:
@@ -533,6 +550,15 @@ the class, 'File::Where', is the same as the program module 'File::Where
 that the 'where' subroutine/method is locating. 
 There are plenty of successful test where C<where> finds
 directories and files as expected.
+
+\=item File-Where-0.05
+
+Rework the POD NOTES and QUALITY ASSURANCE sections.
+
+\=item File-Where-0.06
+
+Added the C<is_module>, C<program_modules>, C<repository_pms> and
+C<dir_pms> subroutines.
 
 \=back
 

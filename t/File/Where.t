@@ -7,14 +7,14 @@ use warnings;
 use warnings::register;
 
 use vars qw($VERSION $DATE $FILE);
-$VERSION = '0.03';   # automatically generated file
-$DATE = '2004/04/09';
+$VERSION = '0.04';   # automatically generated file
+$DATE = '2004/05/04';
 $FILE = __FILE__;
 
 
 ##### Test Script ####
 #
-# Name: where.t
+# Name: Where.t
 #
 # UUT: File::Where
 #
@@ -78,8 +78,8 @@ BEGIN {
    # and the todo tests
    #
    require Test::Tech;
-   Test::Tech->import( qw(plan ok skip skip_tests tech_config finish) );
-   plan(tests => 22);
+   Test::Tech->import( qw(finish is_skip ok plan skip skip_tests tech_config) );
+   plan(tests => 26);
 
 }
 
@@ -92,6 +92,45 @@ END {
    @INC = @lib::ORIG_INC;
    chdir $__restore_dir__;
 }
+
+
+=head1 comment_out
+
+###
+# Have been problems with debugger with trapping CARP
+#
+
+####
+# Poor man's eval where the test script traps off the Carp::croak 
+# Carp::confess functions.
+#
+# The Perl authorities have Core::die locked down tight so
+# it is next to impossible to trap off of Core::die. Lucky 
+# must everyone uses Carp to die instead of just dieing.
+#
+use Carp;
+use vars qw($restore_croak $croak_die_error $restore_confess $confess_die_error);
+$restore_croak = \&Carp::croak;
+$croak_die_error = '';
+$restore_confess = \&Carp::confess;
+$confess_die_error = '';
+no warnings;
+*Carp::croak = sub {
+   $croak_die_error = '# Test Script Croak. ' . (join '', @_);
+   $croak_die_error .= Carp::longmess (join '', @_);
+   $croak_die_error =~ s/\n/\n#/g;
+       goto CARP_DIE; # once croak can not continue
+};
+*Carp::confess = sub {
+   $confess_die_error = '# Test Script Confess. ' . (join '', @_);
+   $confess_die_error .= Carp::longmess (join '', @_);
+   $confess_die_error =~ s/\n/\n#/g;
+       goto CARP_DIE; # once confess can not continue
+
+};
+use warnings;
+=cut
+
 
    # Perl code from C:
     use File::Spec;
@@ -183,150 +222,196 @@ skip_tests( 1 ) unless skip(
  
 #  ok:  2
 
-ok(  $actual = $uut->pm2require( "$uut"), # actual results
+ok(  $actual = $uut->pm2require( 'File::Where'), # actual results
      File::Spec->catfile('File', 'Where' . '.pm'), # expected results
      "",
      "pm2require");
 
 #  ok:  3
 
+ok(  [my @drivers = sort $uut->program_modules( '_Drivers_' )], # actual results
+     ['Driver', 'Generate', 'IO'], # expected results
+     "",
+     "program modules('_Drivers_')");
+
+#  ok:  4
+
+ok(  $uut->is_module('dri', @drivers ), # actual results
+     'Driver', # expected results
+     "",
+     "is_module('dri', @drivers)");
+
+#  ok:  5
+
+ok(  [@drivers = sort $uut->repository_pms( 't::File::_Drivers_' )], # actual results
+     ['Driver', 'Generate', 'IO'], # expected results
+     "",
+     "repository_pms('t::File::_Drivers_')");
+
+#  ok:  6
+
+ok(  [@drivers = sort $uut->dir_pms( '_Drivers_' )], # actual results
+     ['Driver', 'Generate', 'IO'], # expected results
+     "",
+     "dir_pms( '_Drivers_' )");
+
+#  ok:  7
+
 ok(  [@actual = $uut->where($relative_file)], # actual results
      [$absolute_file1, $include_dir, $relative_file], # expected results
      "",
      "where finding a file, array context, path absent");
 
-#  ok:  4
+#  ok:  8
 
 ok(  $actual = $uut->where($relative_file), # actual results
      $absolute_file1, # expected results
      "",
      "where finding a file, scalar context, path absent");
 
-#  ok:  5
+#  ok:  9
 
 ok(  [@actual = $uut->where($relative_file, [$test_script_dir, $include_dir])], # actual results
      [$absolute_file2, $test_script_dir, $relative_file], # expected results
      "",
      "where finding a file, array context, array reference path");
 
-#  ok:  6
+#  ok:  10
 
 ok(  [@actual = $uut->where($relative_dir1, '', 'nofile')], # actual results
      [$absolute_dir1A, $include_dir, $relative_dir1], # expected results
      "",
      "where finding a dir, array context, path absent");
 
-#  ok:  7
+#  ok:  11
 
 ok(  $actual = $uut->where($relative_file, '', 'nofile'), # actual results
      $absolute_dir1A, # expected results
      "",
      "where finding a dir, scalar context, path absent");
 
-#  ok:  8
+#  ok:  12
 
 ok(  [@actual = $uut->where($relative_dir2, \@inc2, 'nofile')], # actual results
      [$absolute_dir2B, $test_script_dir, 't'], # expected results
      "",
      "where finding a dir, array context, array reference path");
 
-#  ok:  9
+#  ok:  13
 
 ok(  $actual = $uut->where('t', [$test_script_dir,@INC], 'nofile'), # actual results
      $absolute_dir2B, # expected results
      "",
      "where finding a dir, scalar context, array reference path");
 
-#  ok:  10
+#  ok:  14
 
 ok(  [@actual = $uut->where_file($relative_file)], # actual results
      [$absolute_file1, $include_dir, $relative_file], # expected results
      "",
      "where_file, array context, path absent");
 
-#  ok:  11
+#  ok:  15
 
 ok(  $actual = $uut->where_file($relative_file, $test_script_dir, $include_dir), # actual results
      $absolute_file2, # expected results
      "",
      "where_file, scalar context, array path");
 
-#  ok:  12
+#  ok:  16
 
 ok(  [@actual = $uut->where_dir($relative_dir1, \@inc2)], # actual results
      [$absolute_dir2A, $test_script_dir, $relative_dir1], # expected results
      "",
      "where_dir, array context, array reference");
 
-#  ok:  13
+#  ok:  17
 
 ok(  [@actual = $uut->where_dir($relative_dir2, $test_script_dir)], # actual results
      [$absolute_dir2B, $test_script_dir, 't'], # expected results
      "",
      "where_dir, array context, array reference");
 
-#  ok:  14
+#  ok:  18
 
 ok(  $actual = $uut->where_dir($relative_file), # actual results
      $absolute_dir1A, # expected results
      "",
      "where_dir, scalar context, path absent");
 
-#  ok:  15
+#  ok:  19
 
 ok(  [@actual= $uut->where_pm( 't::File::Where' )], # actual results
      [$absolute_file1, $include_dir, $relative_file], # expected results
      "",
      "where_pm, array context, path absent");
 
-#  ok:  16
+#  ok:  20
 
 ok(  $actual = $uut->where_pm( 't::File::Where', @inc2), # actual results
      $absolute_file2, # expected results
      "",
      "where_pm, scalar context, array path");
 
-#  ok:  17
+#  ok:  21
 
 ok(  $actual = $uut->where_pm( 'File::Where'), # actual results
      $absolute_file_where, # expected results
      "",
      "where_pm, File::Where boundary case");
 
-#  ok:  18
+#  ok:  22
 
 ok(  [@actual= $uut->where_pm( 't::File::Where', [$test_script_dir])], # actual results
      [$absolute_file2, $test_script_dir, $relative_file], # expected results
      "",
      "where_pm subroutine, array context, array reference path");
 
-#  ok:  19
+#  ok:  23
 
 ok(  [@actual= $uut->where_repository( 't::File' )], # actual results
      [$absolute_dir1A, $include_dir, $relative_dir1], # expected results
      "",
      "where_repository, array context, path absent");
 
-#  ok:  20
+#  ok:  24
 
 ok(  $actual = $uut->where_repository( 't::File', @inc2), # actual results
      $absolute_dir2A, # expected results
      "",
      "where_repository, scalar context, array path");
 
-#  ok:  21
+#  ok:  25
 
 ok(  [@actual= $uut->where_repository( 't::Jolly_Green_Giant', [$test_script_dir])], # actual results
      [$absolute_dir2B, $test_script_dir, 't'], # expected results
      "",
      "where_repository, array context, array reference path");
 
-#  ok:  22
+#  ok:  26
 
    # Perl code from C:
    @INC = @restore_inc; #restore @INC;
    rmtree 't';
 
+
+=head1 comment out
+
+# does not work with debugger
+CARP_DIE:
+    if ($croak_die_error || $confess_die_error) {
+        print $Test::TESTOUT = "not ok $Test::ntest\n";
+        $Test::ntest++;
+        print $Test::TESTERR $croak_die_error . $confess_die_error;
+        $croak_die_error = '';
+        $confess_die_error = '';
+        skip_tests(1, 'Test invalid because of Carp die.');
+    }
+    no warnings;
+    *Carp::croak = $restore_croak;    
+    *Carp::confess = $restore_confess;
+    use warnings;
+=cut
 
     finish();
 
@@ -334,11 +419,11 @@ __END__
 
 =head1 NAME
 
-where.t - test script for File::Where
+Where.t - test script for File::Where
 
 =head1 SYNOPSIS
 
- where.t -log=I<string>
+ Where.t -log=I<string>
 
 =head1 OPTIONS
 
@@ -349,7 +434,7 @@ to distinguish it from the other options.
 
 =item C<-log>
 
-where.t uses this option to redirect the test results 
+Where.t uses this option to redirect the test results 
 from the standard output to a log file.
 
 =back

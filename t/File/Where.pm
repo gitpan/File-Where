@@ -10,8 +10,8 @@ use warnings;
 use warnings::register;
 
 use vars qw($VERSION $DATE $FILE );
-$VERSION = '0.03';
-$DATE = '2004/04/09';
+$VERSION = '0.04';
+$DATE = '2004/05/04';
 $FILE = __FILE__;
 
 ########
@@ -40,7 +40,7 @@ $FILE = __FILE__;
 
  Version: 
 
- Date: 2004/04/09
+ Date: 2004/05/04
 
  Prepared for: General Public 
 
@@ -80,7 +80,7 @@ L<STD FormDB Test Description Fields|Test::STDmaker/STD FormDB Test Description 
 
 =head2 Test Plan
 
- T: 22^
+ T: 26^
 
 =head2 ok: 1
 
@@ -166,142 +166,170 @@ L<STD FormDB Test Description Fields|Test::STDmaker/STD FormDB Test Description 
 =head2 ok: 3
 
   N: pm2require^
-  A: $actual = $uut->pm2require( "$uut")^
+  A: $actual = $uut->pm2require( 'File::Where')^
   E: File::Spec->catfile('File', 'Where' . '.pm')^
  ok: 3^
 
 =head2 ok: 4
 
-  N: where finding a file, array context, path absent^
-  A: [@actual = $uut->where($relative_file)]^
-  E: [$absolute_file1, $include_dir, $relative_file]^
+  N: program modules('_Drivers_')^
+  A: [my @drivers = sort $uut->program_modules( '_Drivers_' )]^
+  E: ['Driver', 'Generate', 'IO']^
  ok: 4^
 
 =head2 ok: 5
 
-  N: where finding a file, scalar context, path absent^
-  A: $actual = $uut->where($relative_file)^
-  E: $absolute_file1^
+  N: is_module('dri', @drivers)^
+  A: $uut->is_module('dri', @drivers )^
+  E: 'Driver'^
  ok: 5^
 
 =head2 ok: 6
 
-  N: where finding a file, array context, array reference path^
-  A: [@actual = $uut->where($relative_file, [$test_script_dir, $include_dir])]^
-  E: [$absolute_file2, $test_script_dir, $relative_file]^
+  N: repository_pms('t::File::_Drivers_')^
+  A: [@drivers = sort $uut->repository_pms( 't::File::_Drivers_' )]^
+  E: ['Driver', 'Generate', 'IO']^
  ok: 6^
 
 =head2 ok: 7
 
-  N: where finding a dir, array context, path absent^
-  A: [@actual = $uut->where($relative_dir1, '', 'nofile')]^
-  E: [$absolute_dir1A, $include_dir, $relative_dir1]^
+  N: dir_pms( '_Drivers_' )^
+  A: [@drivers = sort $uut->dir_pms( '_Drivers_' )]^
+  E: ['Driver', 'Generate', 'IO']^
  ok: 7^
 
 =head2 ok: 8
 
-  N: where finding a dir, scalar context, path absent^
-  A: $actual = $uut->where($relative_file, '', 'nofile')^
-  E: $absolute_dir1A^
+  N: where finding a file, array context, path absent^
+  A: [@actual = $uut->where($relative_file)]^
+  E: [$absolute_file1, $include_dir, $relative_file]^
  ok: 8^
 
 =head2 ok: 9
 
-  N: where finding a dir, array context, array reference path^
-  A: [@actual = $uut->where($relative_dir2, \@inc2, 'nofile')]^
-  E: [$absolute_dir2B, $test_script_dir, 't']^
+  N: where finding a file, scalar context, path absent^
+  A: $actual = $uut->where($relative_file)^
+  E: $absolute_file1^
  ok: 9^
 
 =head2 ok: 10
 
-  N: where finding a dir, scalar context, array reference path^
-  A: $actual = $uut->where('t', [$test_script_dir,@INC], 'nofile')^
-  E: $absolute_dir2B^
+  N: where finding a file, array context, array reference path^
+  A: [@actual = $uut->where($relative_file, [$test_script_dir, $include_dir])]^
+  E: [$absolute_file2, $test_script_dir, $relative_file]^
  ok: 10^
 
 =head2 ok: 11
 
-  N: where_file, array context, path absent^
-  A: [@actual = $uut->where_file($relative_file)]^
-  E: [$absolute_file1, $include_dir, $relative_file]^
+  N: where finding a dir, array context, path absent^
+  A: [@actual = $uut->where($relative_dir1, '', 'nofile')]^
+  E: [$absolute_dir1A, $include_dir, $relative_dir1]^
  ok: 11^
 
 =head2 ok: 12
 
-  N: where_file, scalar context, array path^
-  A: $actual = $uut->where_file($relative_file, $test_script_dir, $include_dir)^
-  E: $absolute_file2^
+  N: where finding a dir, scalar context, path absent^
+  A: $actual = $uut->where($relative_file, '', 'nofile')^
+  E: $absolute_dir1A^
  ok: 12^
 
 =head2 ok: 13
 
-  N: where_dir, array context, array reference^
-  A: [@actual = $uut->where_dir($relative_dir1, \@inc2)]^
-  E: [$absolute_dir2A, $test_script_dir, $relative_dir1]^
+  N: where finding a dir, array context, array reference path^
+  A: [@actual = $uut->where($relative_dir2, \@inc2, 'nofile')]^
+  E: [$absolute_dir2B, $test_script_dir, 't']^
  ok: 13^
 
 =head2 ok: 14
 
-  N: where_dir, array context, array reference^
-  A: [@actual = $uut->where_dir($relative_dir2, $test_script_dir)]^
-  E: [$absolute_dir2B, $test_script_dir, 't']^
+  N: where finding a dir, scalar context, array reference path^
+  A: $actual = $uut->where('t', [$test_script_dir,@INC], 'nofile')^
+  E: $absolute_dir2B^
  ok: 14^
 
 =head2 ok: 15
 
-  N: where_dir, scalar context, path absent^
-  A: $actual = $uut->where_dir($relative_file)^
-  E: $absolute_dir1A^
+  N: where_file, array context, path absent^
+  A: [@actual = $uut->where_file($relative_file)]^
+  E: [$absolute_file1, $include_dir, $relative_file]^
  ok: 15^
 
 =head2 ok: 16
 
-  N: where_pm, array context, path absent^
-  A: [@actual= $uut->where_pm( 't::File::Where' )]^
-  E: [$absolute_file1, $include_dir, $relative_file]^
+  N: where_file, scalar context, array path^
+  A: $actual = $uut->where_file($relative_file, $test_script_dir, $include_dir)^
+  E: $absolute_file2^
  ok: 16^
 
 =head2 ok: 17
 
-  N: where_pm, scalar context, array path^
-  A: $actual = $uut->where_pm( 't::File::Where', @inc2)^
-  E: $absolute_file2^
+  N: where_dir, array context, array reference^
+  A: [@actual = $uut->where_dir($relative_dir1, \@inc2)]^
+  E: [$absolute_dir2A, $test_script_dir, $relative_dir1]^
  ok: 17^
 
 =head2 ok: 18
 
-  N: where_pm, File::Where boundary case^
-  A: $actual = $uut->where_pm( 'File::Where')^
-  E: $absolute_file_where^
+  N: where_dir, array context, array reference^
+  A: [@actual = $uut->where_dir($relative_dir2, $test_script_dir)]^
+  E: [$absolute_dir2B, $test_script_dir, 't']^
  ok: 18^
 
 =head2 ok: 19
 
-  N: where_pm subroutine, array context, array reference path^
-  A: [@actual= $uut->where_pm( 't::File::Where', [$test_script_dir])]^
-  E: [$absolute_file2, $test_script_dir, $relative_file]^
+  N: where_dir, scalar context, path absent^
+  A: $actual = $uut->where_dir($relative_file)^
+  E: $absolute_dir1A^
  ok: 19^
 
 =head2 ok: 20
 
-  N: where_repository, array context, path absent^
-  A: [@actual= $uut->where_repository( 't::File' )]^
-  E: [$absolute_dir1A, $include_dir, $relative_dir1]^
+  N: where_pm, array context, path absent^
+  A: [@actual= $uut->where_pm( 't::File::Where' )]^
+  E: [$absolute_file1, $include_dir, $relative_file]^
  ok: 20^
 
 =head2 ok: 21
 
-  N: where_repository, scalar context, array path^
-  A: $actual = $uut->where_repository( 't::File', @inc2)^
-  E: $absolute_dir2A^
+  N: where_pm, scalar context, array path^
+  A: $actual = $uut->where_pm( 't::File::Where', @inc2)^
+  E: $absolute_file2^
  ok: 21^
 
 =head2 ok: 22
 
+  N: where_pm, File::Where boundary case^
+  A: $actual = $uut->where_pm( 'File::Where')^
+  E: $absolute_file_where^
+ ok: 22^
+
+=head2 ok: 23
+
+  N: where_pm subroutine, array context, array reference path^
+  A: [@actual= $uut->where_pm( 't::File::Where', [$test_script_dir])]^
+  E: [$absolute_file2, $test_script_dir, $relative_file]^
+ ok: 23^
+
+=head2 ok: 24
+
+  N: where_repository, array context, path absent^
+  A: [@actual= $uut->where_repository( 't::File' )]^
+  E: [$absolute_dir1A, $include_dir, $relative_dir1]^
+ ok: 24^
+
+=head2 ok: 25
+
+  N: where_repository, scalar context, array path^
+  A: $actual = $uut->where_repository( 't::File', @inc2)^
+  E: $absolute_dir2A^
+ ok: 25^
+
+=head2 ok: 26
+
   N: where_repository, array context, array reference path^
   A: [@actual= $uut->where_repository( 't::Jolly_Green_Giant', [$test_script_dir])]^
   E: [$absolute_dir2B, $test_script_dir, 't']^
- ok: 22^
+ ok: 26^
 
 
 
@@ -417,11 +445,11 @@ STD2167_Template: ^
 Version: ^
 Classification: None^
 Temp: temp.pl^
-Demo: where.d^
-Verify: where.t^
+Demo: Where.d^
+Verify: Where.t^
 
 
- T: 22^
+ T: 26^
 
 
  C:
@@ -510,104 +538,124 @@ SE: ''^
 ok: 2^
 
  N: pm2require^
- A: $actual = $uut->pm2require( "$uut")^
+ A: $actual = $uut->pm2require( 'File::Where')^
  E: File::Spec->catfile('File', 'Where' . '.pm')^
 ok: 3^
+
+ N: program modules('_Drivers_')^
+ A: [my @drivers = sort $uut->program_modules( '_Drivers_' )]^
+ E: ['Driver', 'Generate', 'IO']^
+ok: 4^
+
+ N: is_module('dri', @drivers)^
+ A: $uut->is_module('dri', @drivers )^
+ E: 'Driver'^
+ok: 5^
+
+ N: repository_pms('t::File::_Drivers_')^
+ A: [@drivers = sort $uut->repository_pms( 't::File::_Drivers_' )]^
+ E: ['Driver', 'Generate', 'IO']^
+ok: 6^
+
+ N: dir_pms( '_Drivers_' )^
+ A: [@drivers = sort $uut->dir_pms( '_Drivers_' )]^
+ E: ['Driver', 'Generate', 'IO']^
+ok: 7^
 
  N: where finding a file, array context, path absent^
  A: [@actual = $uut->where($relative_file)]^
  E: [$absolute_file1, $include_dir, $relative_file]^
-ok: 4^
+ok: 8^
 
  N: where finding a file, scalar context, path absent^
  A: $actual = $uut->where($relative_file)^
  E: $absolute_file1^
-ok: 5^
+ok: 9^
 
  N: where finding a file, array context, array reference path^
  A: [@actual = $uut->where($relative_file, [$test_script_dir, $include_dir])]^
  E: [$absolute_file2, $test_script_dir, $relative_file]^
-ok: 6^
+ok: 10^
 
  N: where finding a dir, array context, path absent^
  A: [@actual = $uut->where($relative_dir1, '', 'nofile')]^
  E: [$absolute_dir1A, $include_dir, $relative_dir1]^
-ok: 7^
+ok: 11^
 
  N: where finding a dir, scalar context, path absent^
  A: $actual = $uut->where($relative_file, '', 'nofile')^
  E: $absolute_dir1A^
-ok: 8^
+ok: 12^
 
  N: where finding a dir, array context, array reference path^
  A: [@actual = $uut->where($relative_dir2, \@inc2, 'nofile')]^
  E: [$absolute_dir2B, $test_script_dir, 't']^
-ok: 9^
+ok: 13^
 
  N: where finding a dir, scalar context, array reference path^
  A: $actual = $uut->where('t', [$test_script_dir,@INC], 'nofile')^
  E: $absolute_dir2B^
-ok: 10^
+ok: 14^
 
  N: where_file, array context, path absent^
  A: [@actual = $uut->where_file($relative_file)]^
  E: [$absolute_file1, $include_dir, $relative_file]^
-ok: 11^
+ok: 15^
 
  N: where_file, scalar context, array path^
  A: $actual = $uut->where_file($relative_file, $test_script_dir, $include_dir)^
  E: $absolute_file2^
-ok: 12^
+ok: 16^
 
  N: where_dir, array context, array reference^
  A: [@actual = $uut->where_dir($relative_dir1, \@inc2)]^
  E: [$absolute_dir2A, $test_script_dir, $relative_dir1]^
-ok: 13^
+ok: 17^
 
  N: where_dir, array context, array reference^
  A: [@actual = $uut->where_dir($relative_dir2, $test_script_dir)]^
  E: [$absolute_dir2B, $test_script_dir, 't']^
-ok: 14^
+ok: 18^
 
  N: where_dir, scalar context, path absent^
  A: $actual = $uut->where_dir($relative_file)^
  E: $absolute_dir1A^
-ok: 15^
+ok: 19^
 
  N: where_pm, array context, path absent^
  A: [@actual= $uut->where_pm( 't::File::Where' )]^
  E: [$absolute_file1, $include_dir, $relative_file]^
-ok: 16^
+ok: 20^
 
  N: where_pm, scalar context, array path^
  A: $actual = $uut->where_pm( 't::File::Where', @inc2)^
  E: $absolute_file2^
-ok: 17^
+ok: 21^
 
  N: where_pm, File::Where boundary case^
  A: $actual = $uut->where_pm( 'File::Where')^
  E: $absolute_file_where^
-ok: 18^
+ok: 22^
 
  N: where_pm subroutine, array context, array reference path^
  A: [@actual= $uut->where_pm( 't::File::Where', [$test_script_dir])]^
  E: [$absolute_file2, $test_script_dir, $relative_file]^
-ok: 19^
+ok: 23^
 
  N: where_repository, array context, path absent^
  A: [@actual= $uut->where_repository( 't::File' )]^
  E: [$absolute_dir1A, $include_dir, $relative_dir1]^
-ok: 20^
+ok: 24^
 
  N: where_repository, scalar context, array path^
  A: $actual = $uut->where_repository( 't::File', @inc2)^
  E: $absolute_dir2A^
-ok: 21^
+ok: 25^
 
  N: where_repository, array context, array reference path^
  A: [@actual= $uut->where_repository( 't::Jolly_Green_Giant', [$test_script_dir])]^
  E: [$absolute_dir2B, $test_script_dir, 't']^
-ok: 22^
+ok: 26^
 
 
  C:
