@@ -1,0 +1,672 @@
+NAME
+    File::Where - find the absolute file for a program module; absolute dir
+    for a repository
+
+SYNOPSIS
+     #######
+     # Subroutine interface
+     #  
+     use File::PM2File qw(pm2require where where_dir where_file where_pm where_repository);
+
+     $file                            = pm2require($pm);
+
+     $abs_file                        = where($relative_file);
+     ($abs_file, $inc_path, $rel_fle) = where($relative_file)
+     $abs_file                        = where($relative_file, \@path);
+     ($abs_file, $inc_path, $rel_fle) = where($relative_file, \@path)
+     $abs_dir                         = where($relative_dir, '', 'nofile'); 
+     ($abs_dir, $inc_path, $rel_dir)  = where($relative_dir, '', 'nofile');
+     $abs_dir                         = where($relative_dir, \@path, 'nofile'); 
+     ($abs_dir, $inc_path, $rel_dir)  = where($relative_dir, \@path, 'nofile');
+
+     $abs_dir                         = where_dir($relative_dir); 
+     ($abs_dir, $inc_path, $rel_dir)  = where_dir($relative_dir);
+     $abs_dir                         = where_dir($relative_dir, \@path; 
+     ($abs_dir, $inc_path, $rel_dir)  = where_dir($relative_dir, \@path);
+     $abs_dir                         = where_dir($relative_dir, @path; 
+     ($abs_dir, $inc_path, $rel_dir)  = where_dir($relative_dir, @path);
+
+     $abs_file                        = where_file($relative_file);
+     ($abs_file, $inc_path, $rel_fle) = where_file($relative_file)
+     $abs_file                        = where_file($relative_file, \@path);
+     ($abs_file, $inc_path, $rel_fle) = where_file($relative_file, \@path)
+     $abs_file                        = where_file($relative_file, @path);
+     ($abs_file, $inc_path, $rel_fle) = where_file($relative_file, @path)
+
+     $abs_file                        = where_pm($pm); 
+     ($abs_file, $inc_path, $require) = where_pm($pm);
+     $abs_file                        = where_pm($pm, \@path);
+     ($abs_file, $inc_path, $require) = where_pm($pm, \@path);
+     $abs_file                        = where_pm($pm, @path);
+     ($abs_file, $inc_path, $require) = where_pm($pm, @path);
+
+     $abs_dir                         = where_repository($repository);
+     ($abs_dir,  $inc_path, $rel_dir) = where_repository($repository);
+     $abs_dir                         = where_repository($repository, \@path);
+     ($abs_dir,  $inc_path, $rel_dir) = where_repository($repository, \@path);
+     $abs_dir                         = where_repository($repository, @path);
+     ($abs_dir,  $inc_path, $rel_dir) = where_repository($repository, @path);
+
+     #######
+     # Class interface
+     #
+     $file                            = File::PM2File->pm2require($pm);
+
+     $abs_file                        = File::PM2File->where($relative_file);
+     ($abs_file, $inc_path, $require) = File::PM2File->where($relative_file)
+     $abs_file                        = File::PM2File->where($relative_file, \@path);
+     ($abs_file, $inc_path, $require) = File::PM2File->where($relative_file, \@path)
+     $abs_dir                         = File::PM2File->where($relative_dir, '', 'nofile'); 
+     ($abs_dir, $inc_path, $rel_dir)  = File::PM2File->where($relative_dir, '', 'nofile');
+     $abs_dir                         = File::PM2File->where($relative_dir, \@path, 'nofile'); 
+     ($abs_dir, $inc_path, $rel_dir)  = File::PM2File->where($relative_dir, \@path, 'nofile');
+
+     $abs_dir                         = File::PM2File->where_dir($relative_dir); 
+     ($abs_dir, $inc_path, $rel_dir)  = File::PM2File->where_dir($relative_dir);
+     $abs_dir                         = File::PM2File->where_dir($relative_dir, \@path; 
+     ($abs_dir, $inc_path, $rel_dir)  = File::PM2File->where_dir($relative_dir, \@path);
+     $abs_dir                         = File::PM2File->where_dir($relative_dir, @path; 
+     ($abs_dir, $inc_path, $rel_dir)  = File::PM2File->where_dir($relative_dir, @path);
+
+     $abs_file                        = File::PM2File->where_file($relative_file);
+     ($abs_file, $inc_path, $require) = File::PM2File->where_file($relative_file)
+     $abs_file                        = File::PM2File->where_file($relative_file, \@path);
+     ($abs_file, $inc_path, $require) = File::PM2File->where_file($relative_file, \@path)
+     $abs_file                        = File::PM2File->where_file($relative_file, @path);
+     ($abs_file, $inc_path, $require) = File::PM2File->where_file($relative_file, @path)
+
+     $abs_file                        = File::PM2File->where_pm($pm); 
+     ($abs_file, $inc_path, $require) = File::PM2File->where_pm($pm);
+     $abs_file                        = File::PM2File->where_pm($pm, \@path);
+     ($abs_file, $inc_path, $require) = File::PM2File->where_pm($pm, \@path);
+     $abs_file                        = File::PM2File->where_pm($pm, @path);
+     ($abs_file, $inc_path, $require) = File::PM2File->where_pm($pm, @path);
+
+     $abs_dir                         = File::PM2File->where_repository($repository);
+     ($abs_dir,  $inc_path, $rel_dir) = File::PM2File->where_repository($repository);
+     $abs_dir                         = File::PM2File->where_repository($repository, \@path);
+     ($abs_dir,  $inc_path, $rel_dir) = File::PM2File->where_repository($repository, \@path);
+     $abs_dir                         = File::PM2File->where_repository($repository, @path);
+     ($abs_dir,  $inc_path, $rel_dir) = File::PM2File->where_repository($repository, @path);
+
+DESCRIPTION
+    From time to time, an program needs to know the abolute file for a
+    program module that has not been loaded. The File::PM2File module
+    provides methods to find this information. For loaded files, using the
+    hash %INC may perform better than using the methods in this module.
+
+METHODS/SUBROUTINES
+  pm2require subroutine
+     $file = pm2require($pm_file)
+
+    The *pm2require* method/subroutine returns the file suitable for use in
+    a Perl "require" for the $pm program module.
+
+  where subroutine
+    The where subroutine is the core subroutine call by where_file,
+    where_dir, where_pm and where_repository.
+
+    When $no_file is absent, 0 or '', the where subroutine performs as
+    established for the "where_file" subroutine; otherwise the where
+    subroutine performs as established for the "where_dir" subroutine.
+
+    The differences is that the "where" syntax only accepts a reference to
+    an array path while the "where_dir" and "where_file" accept both a
+    reference to an array path and an array path.
+
+  where_dir subroutine
+    When $nofile exists and is non-zero, the "find_in_include"
+    method/subroutine looks for the $relative_dir under one of the
+    directories in the @path (@INC path if @path is '' or 0) in the order
+    listed in @path or @INC. When *find_in_include* finds the directory, it
+    returns the absolute file $absolute_dir and the directory $path where it
+    found $relative_dir when the usage calls for an array return; otherwise,
+    the absolute directory $absolute_dir.
+
+    When the @path list of directores exists and is not '' or 0, the
+    "where_dir" subroutine/method searches the @path list of directories
+    instead of the @INC list of directories.
+
+  where_file subroutine
+    When $nofile is '', 0 or absent, the "find_in_include" method/subroutine
+    looks for the $relative_file in one of the directories in the @path
+    (@INC path if @path is absent, '' or 0) in the order listed in @path or
+    @INC. When *find_in_include* finds the file, it returns the absolute
+    file $file_absolute and the directory $path where it found
+    $file_relative when the usage calls for an array return; otherwise, the
+    absolute file $file_absolute.
+
+    When the @path list of directores exists and is not '' or 0, the
+    "where_file" subroutine/method searches the @path list of directories
+    instead of the @INC list of directories.
+
+  where_pm subroutine
+    In an array context, the *where_pm* subroutine/method returns the
+    $absolute_file, the directory $inc_path in @INC, and the relative
+    $require_file for the first directory in @INC list of directories where
+    it found the program module $pm; otherwise, it returns just the
+    $absolute_file.
+
+    When the @path list of directores exists and is not '' or 0, the
+    "where_pm" subroutine/method searches the @path list of directories
+    instead of the @INC list of directories.
+
+  where_repository subroutine
+    An repository specifies the location of a number of program modules. For
+    example, the repository for this program module, "File::Where", is
+    "File::".
+
+    In an array context, the *where_repository* subroutine/method returns
+    the $absolute_directory, the directory $inc_path in @INC for the first
+    directory in @INC list of directories, and the relative directory of the
+    repository where it found the $repository; otherwise, it returns just
+    the $absolute_file.\ When *where_repository* cannot find a directory
+    containing the $repository relative directory, *where_repository* pops
+    the last directory off the $repository relative directory and trys
+    again. If *where_repository* finds that $repository is empty, it returns
+    emptys.
+
+    for the $repository; otherwise, it returns just the $absolute_directory.
+
+    When the @path list of directores exists and is not '' or 0, the
+    "where_repository" subroutine/method searches the @path list of
+    directories instead of the @INC list of directories.
+
+REQUIREMENTS
+DEMONSTRATION
+     ~~~~~~ Demonstration overview ~~~~~
+
+    Perl code begins with the prompt
+
+     =>
+
+    The selected results from executing the Perl Code follow on the next
+    lines. For example,
+
+     => 2 + 2
+     4
+
+     ~~~~~~ The demonstration follows ~~~~~
+
+     =>     use File::Spec;
+     =>     use File::Copy;
+     =>     use File::Path;
+     =>     use File::Package;
+     =>     my $fp = 'File::Package';
+
+     =>     my $uut = 'File::Where';
+     =>     my $loaded = '';
+     =>     # Use the test file as an example since know its absolute path
+     =>     #
+     =>     my $test_script_dir = cwd();
+     =>     chdir File::Spec->updir();
+     =>     chdir File::Spec->updir();
+     =>     my $include_dir = cwd();
+     =>     chdir $test_script_dir;
+     =>     my $OS = $^O;  # need to escape ^
+     =>     unless ($OS) {   # on some perls $^O is not defined
+     =>         require Config;
+     =>     $OS = $Config::Config{'osname'};
+     =>     } 
+     =>     $include_dir =~ s=/=\\=g if( $OS eq 'MSWin32');
+     =>     $test_script_dir =~ s=/=\\=g if( $OS eq 'MSWin32');
+
+     =>     # Put base directory as the first in the @INC path
+     =>     #
+     =>     my @restore_inc = @INC;
+     =>     unshift @INC, $include_dir;    
+
+     =>     my $relative_file = File::Spec->catfile('t', 'File', 'Where.pm'); 
+     =>     my $relative_dir1 = File::Spec->catdir('t', 'File');
+     =>     my $relative_dir2 = File::Spec->catdir('t', 'Jolly_Green_Giant');
+
+     =>     my $absolute_file1 = File::Spec->catfile($include_dir, 't', 'File', 'Where.pm');
+     =>     my $absolute_dir1A = File::Spec->catdir($include_dir, 't', 'File');
+     =>     my $absolute_dir1B = File::Spec->catdir($include_dir, 't');
+
+     =>     mkpath (File::Spec->catdir($test_script_dir, 't','File'));
+     =>     my $absolute_file2 = File::Spec->catfile($test_script_dir, 't', 'File', 'Where.pm');
+     =>     my $absolute_dir2A = File::Spec->catdir($include_dir, 't', 'File', 't', 'File');
+     =>     my $absolute_dir2B = File::Spec->catdir($include_dir, 't', 'File', 't');
+
+     =>     my @inc2 = ($test_script_dir, @INC);  # another way to do unshift
+     =>     
+     =>     copy $absolute_file1,$absolute_file2;
+
+     =>     my (@actual,$actual); # use for array and scalar context
+     => my $errors = $fp->load_package( 'File::Where' )
+     => $errors
+     ''
+
+     => $actual = $uut->pm2require( "$uut")
+     'File\Where.pm'
+
+     => [@actual = $uut->where($relative_file)]
+     [
+               'E:\User\SoftwareDiamonds\installation\t\File\Where.pm',
+               'E:\User\SoftwareDiamonds\installation',
+               't\File\Where.pm'
+             ]
+
+     => $actual = $uut->where($relative_file)
+     'E:\User\SoftwareDiamonds\installation\t\File\Where.pm'
+
+     => [@actual = $uut->where($relative_file, [$test_script_dir, $include_dir])]
+     [
+               'E:\User\SoftwareDiamonds\installation\t\File\t\File\Where.pm',
+               'E:\User\SoftwareDiamonds\installation\t\File',
+               't\File\Where.pm'
+             ]
+
+     => [@actual = $uut->where($relative_dir1, '', 'nofile')]
+     [
+               'E:\User\SoftwareDiamonds\installation\t\File',
+               'E:\User\SoftwareDiamonds\installation',
+               't\File'
+             ]
+
+     => $actual = $uut->where($relative_file, '', 'nofile')
+     'E:\User\SoftwareDiamonds\installation\t\File'
+
+     => [@actual = $uut->where($relative_dir2, \@inc2, 'nofile')]
+     [
+               'E:\User\SoftwareDiamonds\installation\t\File\t',
+               'E:\User\SoftwareDiamonds\installation\t\File',
+               't'
+             ]
+
+     => $actual = $uut->where('t', [$test_script_dir,@INC], 'nofile')
+     'E:\User\SoftwareDiamonds\installation\t\File\t'
+
+     => [@actual = $uut->where_file($relative_file)]
+     [
+               'E:\User\SoftwareDiamonds\installation\t\File\Where.pm',
+               'E:\User\SoftwareDiamonds\installation',
+               't\File\Where.pm'
+             ]
+
+     => $actual = $uut->where_file($relative_file, $test_script_dir, $include_dir)
+     'E:\User\SoftwareDiamonds\installation\t\File\t\File\Where.pm'
+
+     => [@actual = $uut->where_dir($relative_dir1, \@inc2)]
+     [
+               'E:\User\SoftwareDiamonds\installation\t\File\t\File',
+               'E:\User\SoftwareDiamonds\installation\t\File',
+               't\File'
+             ]
+
+     => [@actual = $uut->where_dir($relative_dir2, $test_script_dir)]
+     [
+               'E:\User\SoftwareDiamonds\installation\t\File\t',
+               'E:\User\SoftwareDiamonds\installation\t\File',
+               't'
+             ]
+
+     => $actual = $uut->where_dir($relative_file)
+     'E:\User\SoftwareDiamonds\installation\t\File'
+
+     => [@actual= $uut->where_pm( 't::File::Where' )]
+     [
+               'E:\User\SoftwareDiamonds\installation\t\File\Where.pm',
+               'E:\User\SoftwareDiamonds\installation',
+               't\File\Where.pm'
+             ]
+
+     => $actual = $uut->where_pm( 't::File::Where', @inc2)
+     'E:\User\SoftwareDiamonds\installation\t\File\t\File\Where.pm'
+
+     => [@actual= $uut->where_pm( 't::File::Where', [$test_script_dir])]
+     [
+               'E:\User\SoftwareDiamonds\installation\t\File\t\File\Where.pm',
+               'E:\User\SoftwareDiamonds\installation\t\File',
+               't\File\Where.pm'
+             ]
+
+     => [@actual= $uut->where_repository( 't::File' )]
+     [
+               'E:\User\SoftwareDiamonds\installation\t\File',
+               'E:\User\SoftwareDiamonds\installation',
+               't\File'
+             ]
+
+     => $actual = $uut->where_repository( 't::File', @inc2)
+     'E:\User\SoftwareDiamonds\installation\t\File\t\File'
+
+     => [@actual= $uut->where_repository( 't::Jolly_Green_Giant', [$test_script_dir])]
+     [
+               'E:\User\SoftwareDiamonds\installation\t\File\t',
+               'E:\User\SoftwareDiamonds\installation\t\File',
+               't'
+             ]
+
+     =>    @INC = @restore_inc; #restore @INC;
+     =>    rmtree 't';
+
+QUALITY ASSURANCE
+    Running the test script 'PM2File.t' found in the
+    "File-PM2File-$VERSION.tar.gz" distribution file verifies the
+    requirements for this module.
+
+    All testing software and documentation stems from the Software Test
+    Description (STD) program module 't::File::PM2File', found in the
+    distribution file "File-PM2File-$VERSION.tar.gz".
+
+    The 't::File::PM2File' STD POD contains a tracebility matix between the
+    requirements established above for this module, and the test steps
+    identified by a 'ok' number from running the 'PM2File.t' test script.
+
+    The t::File::PM2File' STD program module '__DATA__' section contains the
+    data to perform the following:
+
+    *   to generate the test script 'PM2File.t'
+
+    *   generate the tailored STD POD in the 't::File::PM2File' module,
+
+    *   generate the 'PM2File.d' demo script,
+
+    *   replace the POD demonstration section herein with the demo script
+        'PM2File.d' output, and
+
+    *   run the test script using Test::Harness with or without the verbose
+        option,
+
+    To perform all the above, prepare and run the automation software as
+    follows:
+
+    *   Install "Test_STDmaker-$VERSION.tar.gz" from one of the
+        respositories only if it has not been installed:
+
+        *   http://www.softwarediamonds/packages/
+
+        *   http://www.perl.com/CPAN-local/authors/id/S/SO/SOFTDIA/
+
+    *   manually place the script tmake.pl in
+        "Test_STDmaker-$VERSION.tar.gz' in the site operating system
+        executable path only if it is not in the executable path
+
+    *   place the 't::File::PM2File' at the same level in the directory
+        struture as the directory holding the 'File::PM2File' module
+
+    *   execute the following in any directory:
+
+         tmake -test_verbose -replace -run -pm=t::File::PM2File
+
+NOTES
+  FILES
+    The installation of the "File-PM2File-$VERSION.tar.gz" distribution file
+    installs the 'Docs::Site_SVD::File_PM2File' SVD program module.
+
+    The __DATA__ data section of the 'Docs::Site_SVD::File_PM2File' contains
+    all the necessary data to generate the POD section of
+    'Docs::Site_SVD::File_PM2File' and the "File-PM2File-$VERSION.tar.gz"
+    distribution file.
+
+    To make use of the 'Docs::Site_SVD::File_PM2File' SVD program module,
+    perform the following:
+
+    *   install "ExtUtils-SVDmaker-$VERSION.tar.gz" from one of the
+        respositories only if it has not been installed:
+
+        *   http://www.softwarediamonds/packages/
+
+        *   http://www.perl.com/CPAN-local/authors/id/S/SO/SOFTDIA/
+
+    *   manually place the script vmake.pl in
+        "ExtUtils-SVDmaker-$VERSION.tar.gz' in the site operating system
+        executable path only if it is not in the executable path
+
+    *   Make any appropriate changes to the __DATA__ section of the
+        'Docs::Site_SVD::File_PM2File' module. For example, any changes to
+        'File::PM2File' will impact the at least 'Changes' field.
+
+    *   Execute the following:
+
+         vmake readme_html all -pm=Docs::Site_SVD::File_PM2File
+
+  AUTHOR
+    The holder of the copyright and maintainer is
+
+    <support@SoftwareDiamonds.com>
+
+  COPYRIGHT NOTICE
+    Copyrighted (c) 2002 Software Diamonds
+
+    All Rights Reserved
+
+  BINDING REQUIREMENTS NOTICE
+    Binding requirements are indexed with the pharse 'shall[dd]' where dd is
+    an unique number for each header section. This conforms to standard
+    federal government practices, 490A ("3.2.3.6" in STD490A). In accordance
+    with the License, Software Diamonds is not liable for any requirement,
+    binding or otherwise.
+
+  LICENSE
+    Software Diamonds permits the redistribution and use in source and
+    binary forms, with or without modification, provided that the following
+    conditions are met:
+
+    1   Redistributions of source code must retain the above copyright
+        notice, this list of conditions and the following disclaimer.
+
+    2   Redistributions in binary form must reproduce the above copyright
+        notice, this list of conditions and the following disclaimer in the
+        documentation and/or other materials provided with the distribution.
+
+    SOFTWARE DIAMONDS, http::www.softwarediamonds.com, PROVIDES THIS
+    SOFTWARE 'AS IS' AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT
+    NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS
+    FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL SOFTWARE
+    DIAMONDS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
+    SPECIAL,EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED
+    TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,DATA, OR
+    PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF
+    LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING USE
+    OF THIS SOFTWARE, EVEN IF ADVISED OF NEGLIGENCE OR OTHERWISE) ARISING IN
+    ANY WAY OUT OF THE POSSIBILITY OF SUCH DAMAGE.
+
+Title Page
+     Software Version Description
+
+     for
+
+      File::Where - find the absolute file for a program module; dir for a repository
+
+     Revision: -
+
+     Version: 0.01
+
+     Date: 2004/04/08
+
+     Prepared for: General Public 
+
+     Prepared by:  SoftwareDiamonds.com E<lt>support@SoftwareDiamonds.comE<gt>
+
+     Copyright: copyright © 2003 Software Diamonds
+
+     Classification: NONE
+
+1.0 SCOPE
+    This paragraph identifies and provides an overview of the released
+    files.
+
+  1.1 Identification
+    This release, identified in 3.2, is a collection of Perl modules that
+    extend the capabilities of the Perl language.
+
+  1.2 System overview
+    The system is the Perl programming language software. As established by
+    the Perl referenced documents, program modules, such the "File::Where"
+    module, extend the Perl language.
+
+    The subroutines in File::Where program module finds the absolute file or
+    dir for a program module, program module repository, relative file,
+    relative directory by searching the directories in the @INC array of
+    directories or an override array of directories. The File::Where
+    supercedes the File::PM2File program module.
+
+  1.3 Document overview.
+    This document releases File::Where version 0.01 providing a description
+    of the inventory, installation instructions and other information
+    necessary to utilize and track this release.
+
+3.0 VERSION DESCRIPTION
+    All file specifications in this SVD use the Unix operating system file
+    specification.
+
+  3.1 Inventory of materials released.
+    This document releases the file
+
+     File-Where-0.01.tar.gz
+
+    found at the following repository(s):
+
+      http://www.softwarediamonds/packages/
+      http://www.perl.com/CPAN-local/authors/id/S/SO/SOFTDIA/
+
+    Restrictions regarding duplication and license provisions are as
+    follows:
+
+    Copyright.
+        copyright © 2003 Software Diamonds
+
+    Copyright holder contact.
+         603 882-0846 E<lt>support@SoftwareDiamonds.comE<gt>
+
+    License.
+        Software Diamonds permits the redistribution and use in source and
+        binary forms, with or without modification, provided that the
+        following conditions are met:
+
+        1   Redistributions of source code, modified or unmodified must
+            retain the above copyright notice, this list of conditions and
+            the following disclaimer.
+
+        2   Redistributions in binary form must reproduce the above
+            copyright notice, this list of conditions and the following
+            disclaimer in the documentation and/or other materials provided
+            with the distribution.
+
+        SOFTWARE DIAMONDS, http://www.SoftwareDiamonds.com, PROVIDES THIS
+        SOFTWARE 'AS IS' AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING,
+        BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND
+        FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL
+        SOFTWARE DIAMONDS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
+        SPECIAL,EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT
+        LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF
+        USE,DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND
+        ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
+        OR TORT (INCLUDING USE OF THIS SOFTWARE, EVEN IF ADVISED OF
+        NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE POSSIBILITY
+        OF SUCH DAMAGE.
+
+  3.2 Inventory of software contents
+    The content of the released, compressed, archieve file, consists of the
+    following files:
+
+     file                                                         version date       comment
+     ------------------------------------------------------------ ------- ---------- ------------------------
+     lib/Docs/Site_SVD/File_Where.pm                              0.01    2004/04/08 new
+     MANIFEST                                                     0.01    2004/04/08 generated new
+     Makefile.PL                                                  0.01    2004/04/08 generated new
+     README                                                       0.01    2004/04/08 generated new
+     lib/File/Where.pm                                            1.12    2004/04/08 new
+     t/File/where.d                                               0.01    2004/04/08 new
+     t/File/Where.pm                                              0.01    2004/04/08 new
+     t/File/where.t                                               0.01    2004/04/08 new
+     t/File/where.d                                               0.01    2004/04/08 new
+     t/File/Where.pm                                              0.01    2004/04/08 new
+     t/File/where.t                                               0.01    2004/04/08 new
+     t/File/File/Package.pm                                       1.13    2004/04/08 new
+     t/File/Test/Tech.pm                                          1.17    2004/04/08 new
+     t/File/Data/Secs2.pm                                         1.15    2004/04/08 new
+
+  3.3 Changes
+    Originated.
+
+  3.4 Adaptation data.
+    This installation requires that the installation site has the Perl
+    programming language installed. There are no other additional
+    requirements or tailoring needed of configurations files, adaptation
+    data or other software needed for this installation particular to any
+    installation site.
+
+  3.5 Related documents.
+    There are no related documents needed for the installation and test of
+    this release.
+
+  3.6 Installation instructions.
+    Instructions for installation, installation tests and installation
+    support are as follows:
+
+    Installation Instructions.
+        To installed the release file, use the CPAN module pr PPM module in
+        the Perl release or the INSTALL.PL script at the following web site:
+
+         http://packages.SoftwareDiamonds.com
+
+        Follow the instructions for the the chosen installation software.
+
+        If all else fails, the file may be manually installed. Enter one of
+        the following repositories in a web browser:
+
+          http://www.softwarediamonds/packages/
+          http://www.perl.com/CPAN-local/authors/id/S/SO/SOFTDIA/
+
+        Right click on 'File-Where-0.01.tar.gz' and download to a temporary
+        installation directory. Enter the following where $make is 'nmake'
+        for microsoft windows; otherwise 'make'.
+
+         gunzip File-Where-0.01.tar.gz
+         tar -xf File-Where-0.01.tar
+         perl Makefile.PL
+         $make test
+         $make install
+
+        On Microsoft operating system, nmake, tar, and gunzip must be in the
+        exeuction path. If tar and gunzip are not install, download and
+        install unxutils from
+
+         http://packages.softwarediamonds.com
+
+    Prerequistes.
+         None.
+
+    Security, privacy, or safety precautions.
+        None.
+
+    Installation Tests.
+        Most Perl installation software will run the following test
+        script(s) as part of the installation:
+
+         t/File/where.t
+
+    Installation support.
+        If there are installation problems or questions with the
+        installation contact
+
+         603 882-0846 E<lt>support@SoftwareDiamonds.comE<gt>
+
+  3.7 Possible problems and known errors
+    There is still much work needed to ensure the quality of this module as
+    follows:
+
+    *   State the functional requirements for each method including not only
+        the GO paths but also what to expect for the NOGO paths
+
+    *   All the tests are GO path tests. Should add NOGO tests.
+
+4.0 NOTES
+    The following are useful acronyms:
+
+    .d  extension for a Perl demo script file
+
+    .pm extension for a Perl Library Module
+
+    .t  extension for a Perl test script file
+
+    POD Plain Old Documentation
+
+2.0 SEE ALSO
+    File::Where
+    Docs::US_DOD::SVD
+
