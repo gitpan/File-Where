@@ -23,7 +23,7 @@ my $tests = join ' ',unix2os('t/File/where.t');
 WriteMakefile(
     NAME => 'File::Where',
     DISTNAME => 'File-Where',
-    VERSION  => '0.03',
+    VERSION  => '0.04',
     dist     => {COMPRESS => 'gzip',
                 'gz' => 'gz'},
     test     => {TESTS => $tests},

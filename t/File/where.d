@@ -7,8 +7,8 @@ use warnings;
 use warnings::register;
 
 use vars qw($VERSION $DATE);
-$VERSION = '0.02';   # automatically generated file
-$DATE = '2004/04/08';
+$VERSION = '0.03';   # automatically generated file
+$DATE = '2004/04/09';
 
 
 ##### Demonstration Script ####
@@ -40,21 +40,30 @@ use vars qw($__restore_dir__ @__restore_inc__ );
 BEGIN {
     use Cwd;
     use File::Spec;
-    use File::TestPath;
+    use FindBin;
     use Test::Tech qw(tech_config plan demo skip_tests);
 
     ########
-    # Working directory is that of the script file
+    # The working directory for this script file is the directory where
+    # the test script resides. Thus, any relative files written or read
+    # by this test script are located relative to this test script.
     #
+    use vars qw( $__restore_dir__ );
     $__restore_dir__ = cwd();
-    my ($vol, $dirs, undef) = File::Spec->splitpath(__FILE__);
+    my ($vol, $dirs) = File::Spec->splitpath($FindBin::Bin,'nofile');
     chdir $vol if $vol;
     chdir $dirs if $dirs;
 
     #######
-    # Add the library of the unit under test (UUT) to @INC
+    # Pick up any testing program modules off this test script.
     #
-    @__restore_inc__ = File::TestPath->test_lib2inc();
+    # When testing on a target site before installation, place any test
+    # program modules that should not be installed in the same directory
+    # as this test script. Likewise, when testing on a host with a @INC
+    # restricted to just raw Perl distribution, place any test program
+    # modules in the same directory as this test script.
+    #
+    use lib $FindBin::Bin;
 
     unshift @INC, File::Spec->catdir( cwd(), 'lib' ); 
 
@@ -62,11 +71,11 @@ BEGIN {
 
 END {
 
-   #########
-   # Restore working directory and @INC back to when enter script
-   #
-   @INC = @__restore_inc__;
-   chdir $__restore_dir__;
+    #########
+    # Restore working directory and @INC back to when enter script
+    #
+    @INC = @lib::ORIG_INC;
+    chdir $__restore_dir__;
 
 }
 
@@ -114,7 +123,6 @@ demo( "\ \ \ \ use\ File\:\:Spec\;\
 \ \ \ \ \#\ Put\ base\ directory\ as\ the\ first\ in\ the\ \@INC\ path\
 \ \ \ \ \#\
 \ \ \ \ my\ \@restore_inc\ \=\ \@INC\;\
-\ \ \ \ unshift\ \@INC\,\ \$include_dir\;\ \ \ \ \
 \
 \ \ \ \ my\ \$relative_file\ \=\ File\:\:Spec\-\>catfile\(\'t\'\,\ \'File\'\,\ \'Where\.pm\'\)\;\ \
 \ \ \ \ my\ \$relative_dir1\ \=\ File\:\:Spec\-\>catdir\(\'t\'\,\ \'File\'\)\;\
@@ -129,11 +137,33 @@ demo( "\ \ \ \ use\ File\:\:Spec\;\
 \ \ \ \ my\ \$absolute_dir2A\ \=\ File\:\:Spec\-\>catdir\(\$include_dir\,\ \'t\'\,\ \'File\'\,\ \'t\'\,\ \'File\'\)\;\
 \ \ \ \ my\ \$absolute_dir2B\ \=\ File\:\:Spec\-\>catdir\(\$include_dir\,\ \'t\'\,\ \'File\'\,\ \'t\'\)\;\
 \
-\ \ \ \ my\ \$absolute_file_where\ \=\ File\:\:Spec\-\>catdir\(\$include_dir\,\ \'lib\'\,\ \'File\'\,\ \'Where\.pm\'\)\;\
+\ \ \ \ \#\#\#\#\#\
+\ \ \ \ \#\ If\ doing\ a\ target\ site\ install\,\ blib\ going\ to\ be\ up\ front\ in\ \@INC\
+\ \ \ \ \#\ Locate\ the\ include\ directory\ with\ high\ probability\ of\ having\ the\
+\ \ \ \ \#\ first\ File\:\:Where\ in\ the\ include\ path\.\
+\ \ \ \ \#\
+\ \ \ \ \#\ Really\ not\ important\ that\ that\ cheapen\ test\ somewhat\ by\ doing\ a\ quasi\
+\ \ \ \ \#\ where\ search\ in\ that\ using\ this\ to\ test\ for\ a\ boundary\ condition\ where\
+\ \ \ \ \#\ the\ class\,\ \'File\:\:Where\'\,\ is\ the\ same\ as\ the\ program\ module\ \'File\:\:Where\
+\ \ \ \ \#\ that\ the\ \'where\'\ subroutine\/method\ is\ locating\.\
+\ \ \ \ \#\
+\ \ \ \ my\ \$absolute_dir_where\ \=\ File\:\:Spec\-\>catdir\(\$include_dir\,\ \'lib\'\)\;\
+\ \ \ \ foreach\ \(\@INC\)\ \{\
+\ \ \ \ \ \ \ \ if\ \(\$_\ \=\~\ \/blib\/\)\ \{\
+\ \ \ \ \ \ \ \ \ \ \ \ \$absolute_dir_where\ \=\ \$_\ \;\
+\ \ \ \ \ \ \ \ \ \ \ \ last\;\
+\ \ \ \ \ \ \ \ \}\
+\ \ \ \ \ \ \ \ elsif\ \(\$_\ \=\~\ \/lib\/\)\ \{\
+\ \ \ \ \ \ \ \ \ \ \ \ \$absolute_dir_where\ \=\ \$_\ \;\
+\ \ \ \ \ \ \ \ \ \ \ \ last\;\
+\ \ \ \ \ \ \ \ \}\
+\ \ \ \ \}\
+\ \ \ \ my\ \$absolute_file_where\ \=\ File\:\:Spec\-\>catfile\(\$absolute_dir_where\,\ \'File\'\,\ \'Where\.pm\'\)\;\
 \
 \ \ \ \ my\ \@inc2\ \=\ \(\$test_script_dir\,\ \@INC\)\;\ \ \#\ another\ way\ to\ do\ unshift\
 \ \ \ \ \
 \ \ \ \ copy\ \$absolute_file1\,\$absolute_file2\;\
+\ \ \ \ unshift\ \@INC\,\ \$include_dir\;\ \ \ \ \
 \
 \ \ \ \ my\ \(\@actual\,\$actual\)\;\ \#\ use\ for\ array\ and\ scalar\ context"); # typed in command           
           use File::Spec;
@@ -162,7 +192,6 @@ demo( "\ \ \ \ use\ File\:\:Spec\;\
     # Put base directory as the first in the @INC path
     #
     my @restore_inc = @INC;
-    unshift @INC, $include_dir;    
 
     my $relative_file = File::Spec->catfile('t', 'File', 'Where.pm'); 
     my $relative_dir1 = File::Spec->catdir('t', 'File');
@@ -177,11 +206,33 @@ demo( "\ \ \ \ use\ File\:\:Spec\;\
     my $absolute_dir2A = File::Spec->catdir($include_dir, 't', 'File', 't', 'File');
     my $absolute_dir2B = File::Spec->catdir($include_dir, 't', 'File', 't');
 
-    my $absolute_file_where = File::Spec->catdir($include_dir, 'lib', 'File', 'Where.pm');
+    #####
+    # If doing a target site install, blib going to be up front in @INC
+    # Locate the include directory with high probability of having the
+    # first File::Where in the include path.
+    #
+    # Really not important that that cheapen test somewhat by doing a quasi
+    # where search in that using this to test for a boundary condition where
+    # the class, 'File::Where', is the same as the program module 'File::Where
+    # that the 'where' subroutine/method is locating.
+    #
+    my $absolute_dir_where = File::Spec->catdir($include_dir, 'lib');
+    foreach (@INC) {
+        if ($_ =~ /blib/) {
+            $absolute_dir_where = $_ ;
+            last;
+        }
+        elsif ($_ =~ /lib/) {
+            $absolute_dir_where = $_ ;
+            last;
+        }
+    }
+    my $absolute_file_where = File::Spec->catfile($absolute_dir_where, 'File', 'Where.pm');
 
     my @inc2 = ($test_script_dir, @INC);  # another way to do unshift
     
     copy $absolute_file1,$absolute_file2;
+    unshift @INC, $include_dir;    
 
     my (@actual,$actual); # use for array and scalar context; # execution
 
@@ -254,10 +305,6 @@ demo( "\$actual\ \=\ \$uut\-\>where_pm\(\ \'t\:\:File\:\:Where\'\,\ \@inc2\)", #
 
 demo( "\$actual\ \=\ \$uut\-\>where_pm\(\ \'File\:\:Where\'\)", # typed in command           
       $actual = $uut->where_pm( 'File::Where')); # execution
-
-
-demo( "\$actual\ \=\ where_pm\(\ \'File\:\:Where\'\)", # typed in command           
-      $actual = where_pm( 'File::Where')); # execution
 
 
 demo( "\[\@actual\=\ \$uut\-\>where_pm\(\ \'t\:\:File\:\:Where\'\,\ \[\$test_script_dir\]\)\]", # typed in command           

@@ -10,7 +10,7 @@ use warnings;
 use warnings::register;
 
 use vars qw($VERSION $DATE $FILE);
-$VERSION = '1.14';
+$VERSION = '1.15';
 $DATE = '2004/04/09';
 $FILE = __FILE__;
 
@@ -22,9 +22,9 @@ use Exporter;
 @ISA = qw(Exporter);
 @EXPORT_OK = qw(pm2require where where_dir where_file where_pm where_repository);
 
-# 1
+1
 
-# __DATA__
+__DATA__
 
 #####
 #
@@ -391,7 +391,6 @@ follow on the next lines. For example,
  =>     # Put base directory as the first in the @INC path
  =>     #
  =>     my @restore_inc = @INC;
- =>     unshift @INC, $include_dir;    
 
  =>     my $relative_file = File::Spec->catfile('t', 'File', 'Where.pm'); 
  =>     my $relative_dir1 = File::Spec->catdir('t', 'File');
@@ -406,18 +405,38 @@ follow on the next lines. For example,
  =>     my $absolute_dir2A = File::Spec->catdir($include_dir, 't', 'File', 't', 'File');
  =>     my $absolute_dir2B = File::Spec->catdir($include_dir, 't', 'File', 't');
 
- =>     my $absolute_file_where = File::Spec->catdir($include_dir, 'lib', 'File', 'Where.pm');
+ =>     #####
+ =>     # If doing a target site install, blib going to be up front in @INC
+ =>     # Locate the include directory with high probability of having the
+ =>     # first File::Where in the include path.
+ =>     #
+ =>     # Really not important that that cheapen test somewhat by doing a quasi
+ =>     # where search in that using this to test for a boundary condition where
+ =>     # the class, 'File::Where', is the same as the program module 'File::Where
+ =>     # that the 'where' subroutine/method is locating.
+ =>     #
+ =>     my $absolute_dir_where = File::Spec->catdir($include_dir, 'lib');
+ =>     foreach (@INC) {
+ =>         if ($_ =~ /blib/) {
+ =>             $absolute_dir_where = $_ ;
+ =>             last;
+ =>         }
+ =>         elsif ($_ =~ /lib/) {
+ =>             $absolute_dir_where = $_ ;
+ =>             last;
+ =>         }
+ =>     }
+ =>     my $absolute_file_where = File::Spec->catfile($absolute_dir_where, 'File', 'Where.pm');
 
  =>     my @inc2 = ($test_script_dir, @INC);  # another way to do unshift
  =>     
  =>     copy $absolute_file1,$absolute_file2;
+ =>     unshift @INC, $include_dir;    
 
  =>     my (@actual,$actual); # use for array and scalar context
- => my $errors = $fp->load_package('File::Where', 'find_pm')
+ => my $errors = $fp->load_package('File::Where', 'where_pm')
  => $errors
- 'Global symbol "@import" requires explicit package name at (eval 5) line 1.
- 	Variable "@import" is not imported at (eval 5) line 1.
- 	'
+ ''
 
  => $actual = $uut->pm2require( "$uut")
  'File\Where.pm'
@@ -499,6 +518,32 @@ follow on the next lines. For example,
  => $actual = $uut->where_pm( 'File::Where')
  'E:\User\SoftwareDiamonds\installation\lib\File\Where.pm'
 
+ => [@actual= $uut->where_pm( 't::File::Where', [$test_script_dir])]
+ [
+           'E:\User\SoftwareDiamonds\installation\t\File\t\File\Where.pm',
+           'E:\User\SoftwareDiamonds\installation\t\File',
+           't\File\Where.pm'
+         ]
+
+ => [@actual= $uut->where_repository( 't::File' )]
+ [
+           'E:\User\SoftwareDiamonds\installation\t\File',
+           'E:\User\SoftwareDiamonds\installation',
+           't\File'
+         ]
+
+ => $actual = $uut->where_repository( 't::File', @inc2)
+ 'E:\User\SoftwareDiamonds\installation\t\File\t\File'
+
+ => [@actual= $uut->where_repository( 't::Jolly_Green_Giant', [$test_script_dir])]
+ [
+           'E:\User\SoftwareDiamonds\installation\t\File\t',
+           'E:\User\SoftwareDiamonds\installation\t\File',
+           't'
+         ]
+
+ =>    @INC = @restore_inc; #restore @INC;
+ =>    rmtree 't';
 
 =head1 QUALITY ASSURANCE
 

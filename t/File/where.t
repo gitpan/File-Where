@@ -7,8 +7,8 @@ use warnings;
 use warnings::register;
 
 use vars qw($VERSION $DATE $FILE);
-$VERSION = '0.02';   # automatically generated file
-$DATE = '2004/04/08';
+$VERSION = '0.03';   # automatically generated file
+$DATE = '2004/04/09';
 $FILE = __FILE__;
 
 
@@ -40,7 +40,7 @@ $FILE = __FILE__;
 #
 BEGIN { 
 
-   use FindBIN;
+   use FindBin;
    use File::Spec;
    use Cwd;
 
@@ -79,13 +79,13 @@ BEGIN {
    #
    require Test::Tech;
    Test::Tech->import( qw(plan ok skip skip_tests tech_config finish) );
-   plan(tests => 23);
+   plan(tests => 22);
 
 }
 
 
 END {
-
+ 
    #########
    # Restore working directory and @INC back to when enter script
    #
@@ -120,7 +120,6 @@ END {
     # Put base directory as the first in the @INC path
     #
     my @restore_inc = @INC;
-    unshift @INC, $include_dir;    
 
     my $relative_file = File::Spec->catfile('t', 'File', 'Where.pm'); 
     my $relative_dir1 = File::Spec->catdir('t', 'File');
@@ -135,11 +134,33 @@ END {
     my $absolute_dir2A = File::Spec->catdir($include_dir, 't', 'File', 't', 'File');
     my $absolute_dir2B = File::Spec->catdir($include_dir, 't', 'File', 't');
 
-    my $absolute_file_where = File::Spec->catdir($include_dir, 'lib', 'File', 'Where.pm');
+    #####
+    # If doing a target site install, blib going to be up front in @INC
+    # Locate the include directory with high probability of having the
+    # first File::Where in the include path.
+    #
+    # Really not important that that cheapen test somewhat by doing a quasi
+    # where search in that using this to test for a boundary condition where
+    # the class, 'File::Where', is the same as the program module 'File::Where
+    # that the 'where' subroutine/method is locating.
+    #
+    my $absolute_dir_where = File::Spec->catdir($include_dir, 'lib');
+    foreach (@INC) {
+        if ($_ =~ /blib/) {
+            $absolute_dir_where = $_ ;
+            last;
+        }
+        elsif ($_ =~ /lib/) {
+            $absolute_dir_where = $_ ;
+            last;
+        }
+    }
+    my $absolute_file_where = File::Spec->catfile($absolute_dir_where, 'File', 'Where.pm');
 
     my @inc2 = ($test_script_dir, @INC);  # another way to do unshift
     
     copy $absolute_file1,$absolute_file2;
+    unshift @INC, $include_dir;    
 
     my (@actual,$actual); # use for array and scalar context;
 
@@ -270,44 +291,37 @@ ok(  $actual = $uut->where_pm( 't::File::Where', @inc2), # actual results
 ok(  $actual = $uut->where_pm( 'File::Where'), # actual results
      $absolute_file_where, # expected results
      "",
-     "where_pm subroutine, File::Where boundary case");
-
-#  ok:  18
-
-ok(  $actual = where_pm( 'File::Where'), # actual results
-     $absolute_file_where, # expected results
-     "",
      "where_pm, File::Where boundary case");
 
-#  ok:  19
+#  ok:  18
 
 ok(  [@actual= $uut->where_pm( 't::File::Where', [$test_script_dir])], # actual results
      [$absolute_file2, $test_script_dir, $relative_file], # expected results
      "",
-     "where_pm, array context, array reference path");
+     "where_pm subroutine, array context, array reference path");
 
-#  ok:  20
+#  ok:  19
 
 ok(  [@actual= $uut->where_repository( 't::File' )], # actual results
      [$absolute_dir1A, $include_dir, $relative_dir1], # expected results
      "",
      "where_repository, array context, path absent");
 
-#  ok:  21
+#  ok:  20
 
 ok(  $actual = $uut->where_repository( 't::File', @inc2), # actual results
      $absolute_dir2A, # expected results
      "",
      "where_repository, scalar context, array path");
 
-#  ok:  22
+#  ok:  21
 
 ok(  [@actual= $uut->where_repository( 't::Jolly_Green_Giant', [$test_script_dir])], # actual results
      [$absolute_dir2B, $test_script_dir, 't'], # expected results
      "",
      "where_repository, array context, array reference path");
 
-#  ok:  23
+#  ok:  22
 
    # Perl code from C:
    @INC = @restore_inc; #restore @INC;

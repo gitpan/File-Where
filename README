@@ -214,7 +214,6 @@ DEMONSTRATION
      =>     # Put base directory as the first in the @INC path
      =>     #
      =>     my @restore_inc = @INC;
-     =>     unshift @INC, $include_dir;    
 
      =>     my $relative_file = File::Spec->catfile('t', 'File', 'Where.pm'); 
      =>     my $relative_dir1 = File::Spec->catdir('t', 'File');
@@ -229,18 +228,38 @@ DEMONSTRATION
      =>     my $absolute_dir2A = File::Spec->catdir($include_dir, 't', 'File', 't', 'File');
      =>     my $absolute_dir2B = File::Spec->catdir($include_dir, 't', 'File', 't');
 
-     =>     my $absolute_file_where = File::Spec->catdir($include_dir, 'lib', 'File', 'Where.pm');
+     =>     #####
+     =>     # If doing a target site install, blib going to be up front in @INC
+     =>     # Locate the include directory with high probability of having the
+     =>     # first File::Where in the include path.
+     =>     #
+     =>     # Really not important that that cheapen test somewhat by doing a quasi
+     =>     # where search in that using this to test for a boundary condition where
+     =>     # the class, 'File::Where', is the same as the program module 'File::Where
+     =>     # that the 'where' subroutine/method is locating.
+     =>     #
+     =>     my $absolute_dir_where = File::Spec->catdir($include_dir, 'lib');
+     =>     foreach (@INC) {
+     =>         if ($_ =~ /blib/) {
+     =>             $absolute_dir_where = $_ ;
+     =>             last;
+     =>         }
+     =>         elsif ($_ =~ /lib/) {
+     =>             $absolute_dir_where = $_ ;
+     =>             last;
+     =>         }
+     =>     }
+     =>     my $absolute_file_where = File::Spec->catfile($absolute_dir_where, 'File', 'Where.pm');
 
      =>     my @inc2 = ($test_script_dir, @INC);  # another way to do unshift
      =>     
      =>     copy $absolute_file1,$absolute_file2;
+     =>     unshift @INC, $include_dir;    
 
      =>     my (@actual,$actual); # use for array and scalar context
-     => my $errors = $fp->load_package('File::Where', 'find_pm')
+     => my $errors = $fp->load_package('File::Where', 'where_pm')
      => $errors
-     'Global symbol "@import" requires explicit package name at (eval 5) line 1.
-            Variable "@import" is not imported at (eval 5) line 1.
-            '
+     ''
 
      => $actual = $uut->pm2require( "$uut")
      'File\Where.pm'
@@ -321,6 +340,33 @@ DEMONSTRATION
 
      => $actual = $uut->where_pm( 'File::Where')
      'E:\User\SoftwareDiamonds\installation\lib\File\Where.pm'
+
+     => [@actual= $uut->where_pm( 't::File::Where', [$test_script_dir])]
+     [
+               'E:\User\SoftwareDiamonds\installation\t\File\t\File\Where.pm',
+               'E:\User\SoftwareDiamonds\installation\t\File',
+               't\File\Where.pm'
+             ]
+
+     => [@actual= $uut->where_repository( 't::File' )]
+     [
+               'E:\User\SoftwareDiamonds\installation\t\File',
+               'E:\User\SoftwareDiamonds\installation',
+               't\File'
+             ]
+
+     => $actual = $uut->where_repository( 't::File', @inc2)
+     'E:\User\SoftwareDiamonds\installation\t\File\t\File'
+
+     => [@actual= $uut->where_repository( 't::Jolly_Green_Giant', [$test_script_dir])]
+     [
+               'E:\User\SoftwareDiamonds\installation\t\File\t',
+               'E:\User\SoftwareDiamonds\installation\t\File',
+               't'
+             ]
+
+     =>    @INC = @restore_inc; #restore @INC;
+     =>    rmtree 't';
 
 QUALITY ASSURANCE
     Running the test script 'Where.t' found in the
@@ -453,7 +499,7 @@ Title Page
 
      Revision: B
 
-     Version: 0.03
+     Version: 0.04
 
      Date: 2004/04/09
 
@@ -485,7 +531,7 @@ Title Page
     module supercedes the File::PM2File program module.
 
   1.3 Document overview.
-    This document releases File::Where version 0.03 providing a description
+    This document releases File::Where version 0.04 providing a description
     of the inventory, installation instructions and other information
     necessary to utilize and track this release.
 
@@ -496,7 +542,7 @@ Title Page
   3.1 Inventory of materials released.
     This document releases the file
 
-     File-Where-0.03.tar.gz
+     File-Where-0.04.tar.gz
 
     found at the following repository(s):
 
@@ -545,18 +591,18 @@ Title Page
 
      file                                                         version date       comment
      ------------------------------------------------------------ ------- ---------- ------------------------
-     lib/Docs/Site_SVD/File_Where.pm                              0.03    2004/04/09 revised 0.02
-     MANIFEST                                                     0.03    2004/04/09 generated, replaces 0.02
-     Makefile.PL                                                  0.03    2004/04/09 generated, replaces 0.02
-     README                                                       0.03    2004/04/09 generated, replaces 0.02
-     lib/File/Where.pm                                            1.14    2004/04/09 revised 1.13
-     t/File/where.d                                               0.02    2004/04/08 unchanged
-     t/File/Where.pm                                              0.02    2004/04/08 unchanged
-     t/File/where.t                                               0.02    2004/04/08 unchanged
-     t/File/where.d                                               0.02    2004/04/08 unchanged
-     t/File/Where.pm                                              0.02    2004/04/08 unchanged
-     t/File/where.t                                               0.02    2004/04/08 unchanged
-     t/File/File/Package.pm                                       1.14    2004/04/09 unchanged
+     lib/Docs/Site_SVD/File_Where.pm                              0.04    2004/04/09 revised 0.03
+     MANIFEST                                                     0.04    2004/04/09 generated, replaces 0.03
+     Makefile.PL                                                  0.04    2004/04/09 generated, replaces 0.03
+     README                                                       0.04    2004/04/09 generated, replaces 0.03
+     lib/File/Where.pm                                            1.15    2004/04/09 revised 1.14
+     t/File/where.d                                               0.03    2004/04/09 revised 0.02
+     t/File/Where.pm                                              0.03    2004/04/09 revised 0.02
+     t/File/where.t                                               0.03    2004/04/09 revised 0.02
+     t/File/where.d                                               0.03    2004/04/08 unchanged
+     t/File/Where.pm                                              0.03    2004/04/08 unchanged
+     t/File/where.t                                               0.03    2004/04/08 unchanged
+     t/File/File/Package.pm                                       1.15    2004/04/09 revised 1.14
      t/File/Test/Tech.pm                                          1.17    2004/04/09 unchanged
      t/File/Data/Secs2.pm                                         1.15    2004/04/09 unchanged
 
@@ -595,6 +641,31 @@ Title Page
         directory of the test script. Repaired "Test::STDmaker" and
         regenerated the distribution.
 
+    File-Where-0.04
+        Subject: FAIL File-Where-0.03 ppc-darwin-thread-multi 7.2.0 From:
+        nothingmuch@woobling.org Date: Fri, 9 Apr 2004 21:59:10 +0300 (IDT)
+
+        # Test 19 got:
+        '/private/var/cpanplus/5.8.3/build/File-Where-0.03/blib/lib/File/Whe
+        re.pm' (t/File/where.t at line 277)
+
+        # Expected:
+        '/private/var/cpanplus/5.8.3/build/File-Where-0.03/lib/File/Where.pm
+        '
+
+        If doing a target site install, the install software going to place
+        the "blib" directory up front in @INC Changed the file test to
+        locate the include directory with high probability of having the
+        first "File::Where" in the include path in determining the expected
+        value.
+
+        Really does not cheapen test by doing a quasi where search where
+        actual does the same. The object of the test to validate boundary
+        condition where the class, 'File::Where', is the same as the program
+        module 'File::Where that the 'where' subroutine/method is locating.
+        There are plenty of successful test where "where" finds directories
+        and files as expected.
+
   3.4 Adaptation data.
     This installation requires that the installation site has the Perl
     programming language installed. There are no other additional
@@ -624,12 +695,12 @@ Title Page
           http://www.softwarediamonds/packages/
           http://www.perl.com/CPAN-local/authors/id/S/SO/SOFTDIA/
 
-        Right click on 'File-Where-0.03.tar.gz' and download to a temporary
+        Right click on 'File-Where-0.04.tar.gz' and download to a temporary
         installation directory. Enter the following where $make is 'nmake'
         for microsoft windows; otherwise 'make'.
 
-         gunzip File-Where-0.03.tar.gz
-         tar -xf File-Where-0.03.tar
+         gunzip File-Where-0.04.tar.gz
+         tar -xf File-Where-0.04.tar
          perl Makefile.PL
          $make test
          $make install

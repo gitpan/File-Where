@@ -11,12 +11,12 @@ use warnings;
 use warnings::register;
 
 use vars qw($VERSION $DATE $FILE);
-$VERSION = '1.14';
-$DATE = '2004/04/08';
+$VERSION = '1.15';
+$DATE = '2004/04/09';
 $FILE = __FILE__;
 
 use File::Spec;
-# use SelfLoader;
+use SelfLoader;
 
 use vars qw(@ISA @EXPORT_OK);
 require Exporter;
@@ -24,9 +24,9 @@ require Exporter;
 @EXPORT_OK = qw(load_package is_package_loaded eval_str);
 use vars qw(@import);
 
-# 1;
+1;
 
-# __DATA__
+__DATA__
 
 
 ######
@@ -43,16 +43,16 @@ sub load_package
      local @import;
 
      (my $package, @import) = @_;
-
-     unless ($package) { # have problem if there is no package
-         return  "# The package name is empty. There is no package to load.\n";
-     }
-
+     return  "# The package name is empty. There is no package to load.\n"
+         unless ($package); 
+        
      if( $package =~ /\-/ ) {
-         return  "# The - in $package causes problems. Perl thinks - is subtraction when it evals it.\n";
+         return  "# The '-' in $package causes problems. Perl thinks '-' is subtraction when it evals it.\n";
      }
 
      my $error = '';
+     my $restore_warn = $SIG{__WARN__};
+     my $restore_croak = \&Carp::croak;
      unless (File::Package->is_package_loaded( $package )) {
 
          #####
@@ -60,7 +60,7 @@ sub load_package
          #
          # On error when evaluating "require $package" only the last
          # line of STDERR, at least on one Perl, is return in $@.
-         # Save the entire STDERR to a memory variable
+         # Save the entire STDERR to a memory variable by using eval_str
          #
          $error = eval_str ("require $package;");
          return "Cannot load $package\n\t" . $error if $error;
@@ -77,25 +77,44 @@ sub load_package
      # Import flagged symbols from load package into current package vocabulary.
      #
      if( @import ) {
+
          ####
-         # Poor man's eval so that we can maintain caller stack for
-         # proper use by import.
+         # Import does not work correctly when running under eval. Import
+         # uses the caller stack to determine way to stuff the symbols.
+         # The eval messes with the stack. Since not using an eval, need
+         # to double check to make sure import does not die.
+         
+         ####
+         # Poor man's eval where trap off the Carp::croak function.
+         # The Perl authorities have Core::die locked down tight so
+         # it is next to impossible to trap off of Core::die. Lucky 
+         # must everyone uses Carp::croak instead of just dieing.
          #
+         # Anyway, get the benefit of a lot of stack gyrations to
+         # formulate the correct error msg by Exporter::import.
+         # 
          my $restore_level = $Exporter::ExportLevel;
          $Exporter::ExportLevel = 1;
-         my $restore_warn = $SIG{__WARN__};
-         my $restore_die = $SIG{__DIE__};
+         no warnings;
          $SIG{__WARN__} = sub { $error .= join '', @_; };
-         $SIG{__DIE__} = sub { $error .= join '', @_; };
-         $package->import( @import );
+         *Carp::croak = sub {
+             $error .= join '', @_;
+             goto IMPORT; # once croak can not continue
+         };
+         if(@import == 1 && defined $import[0] && $import[0] eq '') {
+             $package->import( );
+         }
+         else {
+             $package->import( @import );
+         }
+         IMPORT: *Carp::croak = $restore_croak;
          $SIG{__WARN__} = ref( $restore_warn ) ? $restore_warn : '';
-         $SIG{__DIE__} = ref( $restore_die ) ? $restore_die : '';
          $Exporter::ExportLevel = $restore_level;  
      }
-
+     $SIG{__WARN__} = ref( $restore_warn ) ? $restore_warn : '';
      return $error;
-
 }
+
 
 
 
@@ -144,10 +163,19 @@ sub is_package_loaded
      # Just in case, running Microsoft, delete
      # Unix mirror name for the file
      #
-     $require =~ s|\\|/|g; 
+     my $OS = $^O; 
+     unless ($OS) {   # on some perls $^O is not defined
+         require Config;
+	 $OS = $Config::Config{'osname'};
+     } 
+     $require =~ s|\\|/|g if $OS eq 'MSWin32';; 
      $inc = $inc || $INC{$require};
      ($vocabulary && $inc) ? 1 : '';
 }
+
+
+
+
 
 1
 

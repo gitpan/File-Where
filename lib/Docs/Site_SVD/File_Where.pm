@@ -10,24 +10,24 @@ use warnings;
 use warnings::register;
 
 use vars qw($VERSION $DATE $FILE );
-$VERSION = '0.03';
+$VERSION = '0.04';
 $DATE = '2004/04/09';
 $FILE = __FILE__;
 
 use vars qw(%INVENTORY);
 %INVENTORY = (
-    'lib/Docs/Site_SVD/File_Where.pm' => [qw(0.03 2004/04/09), 'revised 0.02'],
-    'MANIFEST' => [qw(0.03 2004/04/09), 'generated, replaces 0.02'],
-    'Makefile.PL' => [qw(0.03 2004/04/09), 'generated, replaces 0.02'],
-    'README' => [qw(0.03 2004/04/09), 'generated, replaces 0.02'],
-    'lib/File/Where.pm' => [qw(1.14 2004/04/09), 'revised 1.13'],
-    't/File/where.d' => [qw(0.02 2004/04/08), 'unchanged'],
-    't/File/Where.pm' => [qw(0.02 2004/04/08), 'unchanged'],
-    't/File/where.t' => [qw(0.02 2004/04/08), 'unchanged'],
-    't/File/where.d' => [qw(0.02 2004/04/08), 'unchanged'],
-    't/File/Where.pm' => [qw(0.02 2004/04/08), 'unchanged'],
-    't/File/where.t' => [qw(0.02 2004/04/08), 'unchanged'],
-    't/File/File/Package.pm' => [qw(1.14 2004/04/09), 'unchanged'],
+    'lib/Docs/Site_SVD/File_Where.pm' => [qw(0.04 2004/04/09), 'revised 0.03'],
+    'MANIFEST' => [qw(0.04 2004/04/09), 'generated, replaces 0.03'],
+    'Makefile.PL' => [qw(0.04 2004/04/09), 'generated, replaces 0.03'],
+    'README' => [qw(0.04 2004/04/09), 'generated, replaces 0.03'],
+    'lib/File/Where.pm' => [qw(1.15 2004/04/09), 'revised 1.14'],
+    't/File/where.d' => [qw(0.03 2004/04/09), 'revised 0.02'],
+    't/File/Where.pm' => [qw(0.03 2004/04/09), 'revised 0.02'],
+    't/File/where.t' => [qw(0.03 2004/04/09), 'revised 0.02'],
+    't/File/where.d' => [qw(0.03 2004/04/08), 'unchanged'],
+    't/File/Where.pm' => [qw(0.03 2004/04/08), 'unchanged'],
+    't/File/where.t' => [qw(0.03 2004/04/08), 'unchanged'],
+    't/File/File/Package.pm' => [qw(1.15 2004/04/09), 'revised 1.14'],
     't/File/Test/Tech.pm' => [qw(1.17 2004/04/09), 'unchanged'],
     't/File/Data/Secs2.pm' => [qw(1.15 2004/04/09), 'unchanged'],
 
@@ -58,7 +58,7 @@ use vars qw(%INVENTORY);
 
  Revision: B
 
- Version: 0.03
+ Version: 0.04
 
  Date: 2004/04/09
 
@@ -97,7 +97,7 @@ supercedes the File::PM2File program module.
 
 =head2 1.3 Document overview.
 
-This document releases File::Where version 0.03
+This document releases File::Where version 0.04
 providing a description of the inventory, installation
 instructions and other information necessary to
 utilize and track this release.
@@ -112,7 +112,7 @@ system file specification.
 
 This document releases the file 
 
- File-Where-0.03.tar.gz
+ File-Where-0.04.tar.gz
 
 found at the following repository(s):
 
@@ -184,18 +184,18 @@ consists of the following files:
 
  file                                                         version date       comment
  ------------------------------------------------------------ ------- ---------- ------------------------
- lib/Docs/Site_SVD/File_Where.pm                              0.03    2004/04/09 revised 0.02
- MANIFEST                                                     0.03    2004/04/09 generated, replaces 0.02
- Makefile.PL                                                  0.03    2004/04/09 generated, replaces 0.02
- README                                                       0.03    2004/04/09 generated, replaces 0.02
- lib/File/Where.pm                                            1.14    2004/04/09 revised 1.13
- t/File/where.d                                               0.02    2004/04/08 unchanged
- t/File/Where.pm                                              0.02    2004/04/08 unchanged
- t/File/where.t                                               0.02    2004/04/08 unchanged
- t/File/where.d                                               0.02    2004/04/08 unchanged
- t/File/Where.pm                                              0.02    2004/04/08 unchanged
- t/File/where.t                                               0.02    2004/04/08 unchanged
- t/File/File/Package.pm                                       1.14    2004/04/09 unchanged
+ lib/Docs/Site_SVD/File_Where.pm                              0.04    2004/04/09 revised 0.03
+ MANIFEST                                                     0.04    2004/04/09 generated, replaces 0.03
+ Makefile.PL                                                  0.04    2004/04/09 generated, replaces 0.03
+ README                                                       0.04    2004/04/09 generated, replaces 0.03
+ lib/File/Where.pm                                            1.15    2004/04/09 revised 1.14
+ t/File/where.d                                               0.03    2004/04/09 revised 0.02
+ t/File/Where.pm                                              0.03    2004/04/09 revised 0.02
+ t/File/where.t                                               0.03    2004/04/09 revised 0.02
+ t/File/where.d                                               0.03    2004/04/08 unchanged
+ t/File/Where.pm                                              0.03    2004/04/08 unchanged
+ t/File/where.t                                               0.03    2004/04/08 unchanged
+ t/File/File/Package.pm                                       1.15    2004/04/09 revised 1.14
  t/File/Test/Tech.pm                                          1.17    2004/04/09 unchanged
  t/File/Data/Secs2.pm                                         1.15    2004/04/09 unchanged
 
@@ -239,6 +239,30 @@ does. This error is in the test script automatically generated by C<Test::STDmak
 and was just introduced when moved test script libraries from C<tlib> to the directory
 of the test script. Repaired C<Test::STDmaker> and regenerated the distribution.
 
+=item File-Where-0.04
+
+Subject: FAIL File-Where-0.03 ppc-darwin-thread-multi 7.2.0 
+From: nothingmuch@woobling.org 
+Date: Fri,  9 Apr 2004 21:59:10 +0300 (IDT) 
+
+# Test 19 got: '/private/var/cpanplus/5.8.3/build/File-Where-0.03/blib/lib/File/Where.pm' (t/File/where.t at line 277)
+
+#    Expected: '/private/var/cpanplus/5.8.3/build/File-Where-0.03/lib/File/Where.pm'
+
+If doing a target site install, the install software going to place
+the C<blib> directory up front in @INC
+Changed the file test to locate the include directory with high 
+probability of having the first C<File::Where> in the include path
+in determining the expected value.
+
+Really does not cheapen test by doing a quasi
+where search where actual does the same.
+The object of the test to validate boundary condition where
+the class, 'File::Where', is the same as the program module 'File::Where
+that the 'where' subroutine/method is locating. 
+There are plenty of successful test where C<where> finds
+directories and files as expected.
+
 =back
 
 =head2 3.4 Adaptation data.
@@ -277,13 +301,13 @@ Enter one of the following repositories in a web browser:
   http://www.softwarediamonds/packages/
   http://www.perl.com/CPAN-local/authors/id/S/SO/SOFTDIA/
 
-Right click on 'File-Where-0.03.tar.gz' and download to a temporary
+Right click on 'File-Where-0.04.tar.gz' and download to a temporary
 installation directory.
 Enter the following where $make is 'nmake' for microsoft
 windows; otherwise 'make'.
 
- gunzip File-Where-0.03.tar.gz
- tar -xf File-Where-0.03.tar
+ gunzip File-Where-0.04.tar.gz
+ tar -xf File-Where-0.04.tar
  perl Makefile.PL
  $make test
  $make install
@@ -399,10 +423,10 @@ __DATA__
 DISTNAME: File-Where^
 REPOSITORY_DIR: packages^
 
-VERSION : 0.03^
+VERSION : 0.04^
 FREEZE: 1^
 PREVIOUS_DISTNAME:  ^
-PREVIOUS_RELEASE: 0.02^
+PREVIOUS_RELEASE: 0.03^
 REVISION: B^
 
 AUTHOR  : SoftwareDiamonds.com E<lt>support@SoftwareDiamonds.comE<gt>^
@@ -445,10 +469,9 @@ lib/Data/Secs2.pm => t/File/Data/Secs2.pm
 
 PREREQ_PM:  ^
 README_PODS: lib/File/Where.pm^
-
 TESTS: t/File/where.t^
-
 EXE_FILES:  ^
+
 CHANGES:
 The changes to the previous version are as follows:
 
@@ -486,6 +509,30 @@ is part of Perl. Microsoft does not care about capitalization differences while 
 does. This error is in the test script automatically generated by C<Test::STDmaker>
 and was just introduced when moved test script libraries from C<tlib> to the directory
 of the test script. Repaired C<Test::STDmaker> and regenerated the distribution.
+
+\=item File-Where-0.04
+
+Subject: FAIL File-Where-0.03 ppc-darwin-thread-multi 7.2.0 
+From: nothingmuch@woobling.org 
+Date: Fri,  9 Apr 2004 21:59:10 +0300 (IDT) 
+
+# Test 19 got: '/private/var/cpanplus/5.8.3/build/File-Where-0.03/blib/lib/File/Where.pm' (t/File/where.t at line 277)
+
+#    Expected: '/private/var/cpanplus/5.8.3/build/File-Where-0.03/lib/File/Where.pm'
+
+If doing a target site install, the install software going to place
+the C<blib> directory up front in @INC
+Changed the file test to locate the include directory with high 
+probability of having the first C<File::Where> in the include path
+in determining the expected value.
+
+Really does not cheapen test by doing a quasi
+where search where actual does the same.
+The object of the test to validate boundary condition where
+the class, 'File::Where', is the same as the program module 'File::Where
+that the 'where' subroutine/method is locating. 
+There are plenty of successful test where C<where> finds
+directories and files as expected.
 
 \=back
 
