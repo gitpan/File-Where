@@ -10,8 +10,8 @@ use warnings;
 use warnings::register;
 
 use vars qw($VERSION $DATE $FILE);
-$VERSION = '1.13';
-$DATE = '2004/04/08';
+$VERSION = '1.14';
+$DATE = '2004/04/09';
 $FILE = __FILE__;
 
 use File::Spec;
@@ -175,7 +175,7 @@ File::Where - find the absolute file for a program module; absolute dir for a re
  #######
  # Subroutine interface
  #  
- use File::PM2File qw(pm2require where where_dir where_file where_pm where_repository);
+ use File::Where qw(pm2require where where_dir where_file where_pm where_repository);
 
  $file                            = pm2require($pm);
 
@@ -219,49 +219,49 @@ File::Where - find the absolute file for a program module; absolute dir for a re
  #######
  # Class interface
  #
- $file                            = File::PM2File->pm2require($pm);
+ $file                            = File::Where->pm2require($pm);
 
- $abs_file                        = File::PM2File->where($relative_file);
- ($abs_file, $inc_path, $require) = File::PM2File->where($relative_file)
- $abs_file                        = File::PM2File->where($relative_file, \@path);
- ($abs_file, $inc_path, $require) = File::PM2File->where($relative_file, \@path)
- $abs_dir                         = File::PM2File->where($relative_dir, '', 'nofile'); 
- ($abs_dir, $inc_path, $rel_dir)  = File::PM2File->where($relative_dir, '', 'nofile');
- $abs_dir                         = File::PM2File->where($relative_dir, \@path, 'nofile'); 
- ($abs_dir, $inc_path, $rel_dir)  = File::PM2File->where($relative_dir, \@path, 'nofile');
+ $abs_file                        = File::Where->where($relative_file);
+ ($abs_file, $inc_path, $require) = File::Where->where($relative_file)
+ $abs_file                        = File::Where->where($relative_file, \@path);
+ ($abs_file, $inc_path, $require) = File::Where->where($relative_file, \@path)
+ $abs_dir                         = File::Where->where($relative_dir, '', 'nofile'); 
+ ($abs_dir, $inc_path, $rel_dir)  = File::Where->where($relative_dir, '', 'nofile');
+ $abs_dir                         = File::Where->where($relative_dir, \@path, 'nofile'); 
+ ($abs_dir, $inc_path, $rel_dir)  = File::Where->where($relative_dir, \@path, 'nofile');
 
- $abs_dir                         = File::PM2File->where_dir($relative_dir); 
- ($abs_dir, $inc_path, $rel_dir)  = File::PM2File->where_dir($relative_dir);
- $abs_dir                         = File::PM2File->where_dir($relative_dir, \@path; 
- ($abs_dir, $inc_path, $rel_dir)  = File::PM2File->where_dir($relative_dir, \@path);
- $abs_dir                         = File::PM2File->where_dir($relative_dir, @path; 
- ($abs_dir, $inc_path, $rel_dir)  = File::PM2File->where_dir($relative_dir, @path);
+ $abs_dir                         = File::Where->where_dir($relative_dir); 
+ ($abs_dir, $inc_path, $rel_dir)  = File::Where->where_dir($relative_dir);
+ $abs_dir                         = File::Where->where_dir($relative_dir, \@path; 
+ ($abs_dir, $inc_path, $rel_dir)  = File::Where->where_dir($relative_dir, \@path);
+ $abs_dir                         = File::Where->where_dir($relative_dir, @path; 
+ ($abs_dir, $inc_path, $rel_dir)  = File::Where->where_dir($relative_dir, @path);
 
- $abs_file                        = File::PM2File->where_file($relative_file);
- ($abs_file, $inc_path, $require) = File::PM2File->where_file($relative_file)
- $abs_file                        = File::PM2File->where_file($relative_file, \@path);
- ($abs_file, $inc_path, $require) = File::PM2File->where_file($relative_file, \@path)
- $abs_file                        = File::PM2File->where_file($relative_file, @path);
- ($abs_file, $inc_path, $require) = File::PM2File->where_file($relative_file, @path)
+ $abs_file                        = File::Where->where_file($relative_file);
+ ($abs_file, $inc_path, $require) = File::Where->where_file($relative_file)
+ $abs_file                        = File::Where->where_file($relative_file, \@path);
+ ($abs_file, $inc_path, $require) = File::Where->where_file($relative_file, \@path)
+ $abs_file                        = File::Where->where_file($relative_file, @path);
+ ($abs_file, $inc_path, $require) = File::Where->where_file($relative_file, @path)
 
- $abs_file                        = File::PM2File->where_pm($pm); 
- ($abs_file, $inc_path, $require) = File::PM2File->where_pm($pm);
- $abs_file                        = File::PM2File->where_pm($pm, \@path);
- ($abs_file, $inc_path, $require) = File::PM2File->where_pm($pm, \@path);
- $abs_file                        = File::PM2File->where_pm($pm, @path);
- ($abs_file, $inc_path, $require) = File::PM2File->where_pm($pm, @path);
+ $abs_file                        = File::Where->where_pm($pm); 
+ ($abs_file, $inc_path, $require) = File::Where->where_pm($pm);
+ $abs_file                        = File::Where->where_pm($pm, \@path);
+ ($abs_file, $inc_path, $require) = File::Where->where_pm($pm, \@path);
+ $abs_file                        = File::Where->where_pm($pm, @path);
+ ($abs_file, $inc_path, $require) = File::Where->where_pm($pm, @path);
 
- $abs_dir                         = File::PM2File->where_repository($repository);
- ($abs_dir,  $inc_path, $rel_dir) = File::PM2File->where_repository($repository);
- $abs_dir                         = File::PM2File->where_repository($repository, \@path);
- ($abs_dir,  $inc_path, $rel_dir) = File::PM2File->where_repository($repository, \@path);
- $abs_dir                         = File::PM2File->where_repository($repository, @path);
- ($abs_dir,  $inc_path, $rel_dir) = File::PM2File->where_repository($repository, @path);
+ $abs_dir                         = File::Where->where_repository($repository);
+ ($abs_dir,  $inc_path, $rel_dir) = File::Where->where_repository($repository);
+ $abs_dir                         = File::Where->where_repository($repository, \@path);
+ ($abs_dir,  $inc_path, $rel_dir) = File::Where->where_repository($repository, \@path);
+ $abs_dir                         = File::Where->where_repository($repository, @path);
+ ($abs_dir,  $inc_path, $rel_dir) = File::Where->where_repository($repository, @path);
 
 =head1 DESCRIPTION
 
 From time to time, an program needs to know the abolute file for a program
-module that has not been loaded. The File::PM2File module provides methods
+module that has not been loaded. The File::Where module provides methods
 to find this information. For loaded files, using the hash %INC may
 perform better than using the methods in this module.
 
@@ -502,25 +502,25 @@ follow on the next lines. For example,
 
 =head1 QUALITY ASSURANCE
 
-Running the test script 'PM2File.t' found in
-the "File-PM2File-$VERSION.tar.gz" distribution file verifies
+Running the test script 'Where.t' found in
+the "File-Where-$VERSION.tar.gz" distribution file verifies
 the requirements for this module.
 
 All testing software and documentation
 stems from the 
 Software Test Description (L<STD|Docs::US_DOD::STD>)
-program module 't::File::PM2File',
+program module 't::File::Where',
 found in the distribution file 
-"File-PM2File-$VERSION.tar.gz". 
+"File-Where-$VERSION.tar.gz". 
 
-The 't::File::PM2File' L<STD|Docs::US_DOD::STD> POD contains
+The 't::File::Where' L<STD|Docs::US_DOD::STD> POD contains
 a tracebility matix between the
 requirements established above for this module, and
 the test steps identified by a
-'ok' number from running the 'PM2File.t'
+'ok' number from running the 'Where.t'
 test script.
 
-The t::File::PM2File' L<STD|Docs::US_DOD::STD>
+The t::File::Where' L<STD|Docs::US_DOD::STD>
 program module '__DATA__' section contains the data 
 to perform the following:
 
@@ -528,23 +528,23 @@ to perform the following:
 
 =item *
 
-to generate the test script 'PM2File.t'
+to generate the test script 'Where.t'
 
 =item *
 
 generate the tailored 
 L<STD|Docs::US_DOD::STD> POD in
-the 't::File::PM2File' module, 
+the 't::File::Where' module, 
 
 =item *
 
-generate the 'PM2File.d' demo script, 
+generate the 'Where.d' demo script, 
 
 =item *
 
 replace the POD demonstration section
 herein with the demo script
-'PM2File.d' output, and
+'Where.d' output, and
 
 =item *
 
@@ -587,16 +587,16 @@ executable path
 
 =item *
 
-place the 't::File::PM2File' at the same
+place the 't::File::Where' at the same
 level in the directory struture as the
-directory holding the 'File::PM2File'
+directory holding the 'File::Where'
 module
 
 =item *
 
 execute the following in any directory:
 
- tmake -test_verbose -replace -run -pm=t::File::PM2File
+ tmake -test_verbose -replace -run -pm=t::File::Where
 
 =back
 
@@ -605,18 +605,18 @@ execute the following in any directory:
 =head2 FILES
 
 The installation of the
-"File-PM2File-$VERSION.tar.gz" distribution file
-installs the 'Docs::Site_SVD::File_PM2File'
+"File-Where-$VERSION.tar.gz" distribution file
+installs the 'Docs::Site_SVD::File_Where'
 L<SVD|Docs::US_DOD::SVD> program module.
 
 The __DATA__ data section of the 
-'Docs::Site_SVD::File_PM2File' contains all
+'Docs::Site_SVD::File_Where' contains all
 the necessary data to generate the POD
-section of 'Docs::Site_SVD::File_PM2File' and
-the "File-PM2File-$VERSION.tar.gz" distribution file.
+section of 'Docs::Site_SVD::File_Where' and
+the "File-Where-$VERSION.tar.gz" distribution file.
 
 To make use of the 
-'Docs::Site_SVD::File_PM2File'
+'Docs::Site_SVD::File_Where'
 L<SVD|Docs::US_DOD::SVD> program module,
 perform the following:
 
@@ -651,17 +651,17 @@ executable path
 =item *
 
 Make any appropriate changes to the
-__DATA__ section of the 'Docs::Site_SVD::File_PM2File'
+__DATA__ section of the 'Docs::Site_SVD::File_Where'
 module.
 For example, any changes to
-'File::PM2File' will impact the
+'File::Where' will impact the
 at least 'Changes' field.
 
 =item *
 
 Execute the following:
 
- vmake readme_html all -pm=Docs::Site_SVD::File_PM2File
+ vmake readme_html all -pm=Docs::Site_SVD::File_Where
 
 =back
 

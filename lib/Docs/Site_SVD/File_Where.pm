@@ -10,26 +10,26 @@ use warnings;
 use warnings::register;
 
 use vars qw($VERSION $DATE $FILE );
-$VERSION = '0.02';
-$DATE = '2004/04/08';
+$VERSION = '0.03';
+$DATE = '2004/04/09';
 $FILE = __FILE__;
 
 use vars qw(%INVENTORY);
 %INVENTORY = (
-    'lib/Docs/Site_SVD/File_Where.pm' => [qw(0.02 2004/04/08), 'revised 0.01'],
-    'MANIFEST' => [qw(0.02 2004/04/08), 'generated, replaces 0.01'],
-    'Makefile.PL' => [qw(0.02 2004/04/08), 'generated, replaces 0.01'],
-    'README' => [qw(0.02 2004/04/08), 'generated, replaces 0.01'],
-    'lib/File/Where.pm' => [qw(1.13 2004/04/08), 'revised 1.12'],
-    't/File/where.d' => [qw(0.02 2004/04/08), 'revised 0.01'],
-    't/File/Where.pm' => [qw(0.02 2004/04/08), 'revised 0.01'],
-    't/File/where.t' => [qw(0.02 2004/04/08), 'revised 0.01'],
+    'lib/Docs/Site_SVD/File_Where.pm' => [qw(0.03 2004/04/09), 'revised 0.02'],
+    'MANIFEST' => [qw(0.03 2004/04/09), 'generated, replaces 0.02'],
+    'Makefile.PL' => [qw(0.03 2004/04/09), 'generated, replaces 0.02'],
+    'README' => [qw(0.03 2004/04/09), 'generated, replaces 0.02'],
+    'lib/File/Where.pm' => [qw(1.14 2004/04/09), 'revised 1.13'],
     't/File/where.d' => [qw(0.02 2004/04/08), 'unchanged'],
     't/File/Where.pm' => [qw(0.02 2004/04/08), 'unchanged'],
     't/File/where.t' => [qw(0.02 2004/04/08), 'unchanged'],
-    't/File/File/Package.pm' => [qw(1.14 2004/04/08), 'revised 1.13'],
-    't/File/Test/Tech.pm' => [qw(1.17 2004/04/08), 'unchanged'],
-    't/File/Data/Secs2.pm' => [qw(1.15 2004/04/08), 'unchanged'],
+    't/File/where.d' => [qw(0.02 2004/04/08), 'unchanged'],
+    't/File/Where.pm' => [qw(0.02 2004/04/08), 'unchanged'],
+    't/File/where.t' => [qw(0.02 2004/04/08), 'unchanged'],
+    't/File/File/Package.pm' => [qw(1.14 2004/04/09), 'unchanged'],
+    't/File/Test/Tech.pm' => [qw(1.17 2004/04/09), 'unchanged'],
+    't/File/Data/Secs2.pm' => [qw(1.15 2004/04/09), 'unchanged'],
 
 );
 
@@ -56,11 +56,11 @@ use vars qw(%INVENTORY);
 
   File::Where - find the absolute file for a program module; dir for a repository
 
- Revision: A
+ Revision: B
 
- Version: 0.02
+ Version: 0.03
 
- Date: 2004/04/08
+ Date: 2004/04/09
 
  Prepared for: General Public 
 
@@ -97,7 +97,7 @@ supercedes the File::PM2File program module.
 
 =head2 1.3 Document overview.
 
-This document releases File::Where version 0.02
+This document releases File::Where version 0.03
 providing a description of the inventory, installation
 instructions and other information necessary to
 utilize and track this release.
@@ -112,7 +112,7 @@ system file specification.
 
 This document releases the file 
 
- File-Where-0.02.tar.gz
+ File-Where-0.03.tar.gz
 
 found at the following repository(s):
 
@@ -184,20 +184,20 @@ consists of the following files:
 
  file                                                         version date       comment
  ------------------------------------------------------------ ------- ---------- ------------------------
- lib/Docs/Site_SVD/File_Where.pm                              0.02    2004/04/08 revised 0.01
- MANIFEST                                                     0.02    2004/04/08 generated, replaces 0.01
- Makefile.PL                                                  0.02    2004/04/08 generated, replaces 0.01
- README                                                       0.02    2004/04/08 generated, replaces 0.01
- lib/File/Where.pm                                            1.13    2004/04/08 revised 1.12
- t/File/where.d                                               0.02    2004/04/08 revised 0.01
- t/File/Where.pm                                              0.02    2004/04/08 revised 0.01
- t/File/where.t                                               0.02    2004/04/08 revised 0.01
+ lib/Docs/Site_SVD/File_Where.pm                              0.03    2004/04/09 revised 0.02
+ MANIFEST                                                     0.03    2004/04/09 generated, replaces 0.02
+ Makefile.PL                                                  0.03    2004/04/09 generated, replaces 0.02
+ README                                                       0.03    2004/04/09 generated, replaces 0.02
+ lib/File/Where.pm                                            1.14    2004/04/09 revised 1.13
  t/File/where.d                                               0.02    2004/04/08 unchanged
  t/File/Where.pm                                              0.02    2004/04/08 unchanged
  t/File/where.t                                               0.02    2004/04/08 unchanged
- t/File/File/Package.pm                                       1.14    2004/04/08 revised 1.13
- t/File/Test/Tech.pm                                          1.17    2004/04/08 unchanged
- t/File/Data/Secs2.pm                                         1.15    2004/04/08 unchanged
+ t/File/where.d                                               0.02    2004/04/08 unchanged
+ t/File/Where.pm                                              0.02    2004/04/08 unchanged
+ t/File/where.t                                               0.02    2004/04/08 unchanged
+ t/File/File/Package.pm                                       1.14    2004/04/09 unchanged
+ t/File/Test/Tech.pm                                          1.17    2004/04/09 unchanged
+ t/File/Data/Secs2.pm                                         1.15    2004/04/09 unchanged
 
 
 =head2 3.3 Changes
@@ -219,6 +219,25 @@ Added code to where_pm for the boundary case where
 
 This bug was discovered because the obsoleted File::PM2File
 module now uses File::Where for backwards compatibility.
+
+=item File-Where-0.03
+
+ Subject: FAIL Test-Tech-0.18 i586-linux 2.4.22-4tr 
+ From: cpansmoke@alternation.net 
+ Date: Thu,  8 Apr 2004 15:09:35 -0300 (ADT) 
+
+ PERL_DL_NONLAZY=1 /usr/bin/perl5.8.0 "-MExtUtils::Command::MM" "-e" "test_harness(0, 'blib/lib', 'blib/arch')" t/Test/Tech/Tech.t
+ t/Test/Tech/Tech....Can't locate FindBIN.pm
+
+ Summary of my perl5 (revision 5.0 version 8 subversion 0) configuration:
+   Platform:
+     osname=linux, osvers=2.4.22-4tr, archname=i586-linux
+
+This is capitalization problem. The program module name is 'FindBin' not 'FindBIN' which
+is part of Perl. Microsoft does not care about capitalization differences while linux
+does. This error is in the test script automatically generated by C<Test::STDmaker>
+and was just introduced when moved test script libraries from C<tlib> to the directory
+of the test script. Repaired C<Test::STDmaker> and regenerated the distribution.
 
 =back
 
@@ -258,13 +277,13 @@ Enter one of the following repositories in a web browser:
   http://www.softwarediamonds/packages/
   http://www.perl.com/CPAN-local/authors/id/S/SO/SOFTDIA/
 
-Right click on 'File-Where-0.02.tar.gz' and download to a temporary
+Right click on 'File-Where-0.03.tar.gz' and download to a temporary
 installation directory.
 Enter the following where $make is 'nmake' for microsoft
 windows; otherwise 'make'.
 
- gunzip File-Where-0.02.tar.gz
- tar -xf File-Where-0.02.tar
+ gunzip File-Where-0.03.tar.gz
+ tar -xf File-Where-0.03.tar
  perl Makefile.PL
  $make test
  $make install
@@ -380,11 +399,11 @@ __DATA__
 DISTNAME: File-Where^
 REPOSITORY_DIR: packages^
 
-VERSION : 0.02^
+VERSION : 0.03^
 FREEZE: 1^
 PREVIOUS_DISTNAME:  ^
-PREVIOUS_RELEASE: 0.01^
-REVISION: A^
+PREVIOUS_RELEASE: 0.02^
+REVISION: B^
 
 AUTHOR  : SoftwareDiamonds.com E<lt>support@SoftwareDiamonds.comE<gt>^
 
@@ -448,6 +467,25 @@ Added code to where_pm for the boundary case where
 
 This bug was discovered because the obsoleted File::PM2File
 module now uses File::Where for backwards compatibility.
+
+\=item File-Where-0.03
+
+ Subject: FAIL Test-Tech-0.18 i586-linux 2.4.22-4tr 
+ From: cpansmoke@alternation.net 
+ Date: Thu,  8 Apr 2004 15:09:35 -0300 (ADT) 
+
+ PERL_DL_NONLAZY=1 /usr/bin/perl5.8.0 "-MExtUtils::Command::MM" "-e" "test_harness(0, 'blib/lib', 'blib/arch')" t/Test/Tech/Tech.t
+ t/Test/Tech/Tech....Can't locate FindBIN.pm
+
+ Summary of my perl5 (revision 5.0 version 8 subversion 0) configuration:
+   Platform:
+     osname=linux, osvers=2.4.22-4tr, archname=i586-linux
+
+This is capitalization problem. The program module name is 'FindBin' not 'FindBIN' which
+is part of Perl. Microsoft does not care about capitalization differences while linux
+does. This error is in the test script automatically generated by C<Test::STDmaker>
+and was just introduced when moved test script libraries from C<tlib> to the directory
+of the test script. Repaired C<Test::STDmaker> and regenerated the distribution.
 
 \=back
 

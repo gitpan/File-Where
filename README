@@ -6,7 +6,7 @@ SYNOPSIS
      #######
      # Subroutine interface
      #  
-     use File::PM2File qw(pm2require where where_dir where_file where_pm where_repository);
+     use File::Where qw(pm2require where where_dir where_file where_pm where_repository);
 
      $file                            = pm2require($pm);
 
@@ -50,50 +50,50 @@ SYNOPSIS
      #######
      # Class interface
      #
-     $file                            = File::PM2File->pm2require($pm);
+     $file                            = File::Where->pm2require($pm);
 
-     $abs_file                        = File::PM2File->where($relative_file);
-     ($abs_file, $inc_path, $require) = File::PM2File->where($relative_file)
-     $abs_file                        = File::PM2File->where($relative_file, \@path);
-     ($abs_file, $inc_path, $require) = File::PM2File->where($relative_file, \@path)
-     $abs_dir                         = File::PM2File->where($relative_dir, '', 'nofile'); 
-     ($abs_dir, $inc_path, $rel_dir)  = File::PM2File->where($relative_dir, '', 'nofile');
-     $abs_dir                         = File::PM2File->where($relative_dir, \@path, 'nofile'); 
-     ($abs_dir, $inc_path, $rel_dir)  = File::PM2File->where($relative_dir, \@path, 'nofile');
+     $abs_file                        = File::Where->where($relative_file);
+     ($abs_file, $inc_path, $require) = File::Where->where($relative_file)
+     $abs_file                        = File::Where->where($relative_file, \@path);
+     ($abs_file, $inc_path, $require) = File::Where->where($relative_file, \@path)
+     $abs_dir                         = File::Where->where($relative_dir, '', 'nofile'); 
+     ($abs_dir, $inc_path, $rel_dir)  = File::Where->where($relative_dir, '', 'nofile');
+     $abs_dir                         = File::Where->where($relative_dir, \@path, 'nofile'); 
+     ($abs_dir, $inc_path, $rel_dir)  = File::Where->where($relative_dir, \@path, 'nofile');
 
-     $abs_dir                         = File::PM2File->where_dir($relative_dir); 
-     ($abs_dir, $inc_path, $rel_dir)  = File::PM2File->where_dir($relative_dir);
-     $abs_dir                         = File::PM2File->where_dir($relative_dir, \@path; 
-     ($abs_dir, $inc_path, $rel_dir)  = File::PM2File->where_dir($relative_dir, \@path);
-     $abs_dir                         = File::PM2File->where_dir($relative_dir, @path; 
-     ($abs_dir, $inc_path, $rel_dir)  = File::PM2File->where_dir($relative_dir, @path);
+     $abs_dir                         = File::Where->where_dir($relative_dir); 
+     ($abs_dir, $inc_path, $rel_dir)  = File::Where->where_dir($relative_dir);
+     $abs_dir                         = File::Where->where_dir($relative_dir, \@path; 
+     ($abs_dir, $inc_path, $rel_dir)  = File::Where->where_dir($relative_dir, \@path);
+     $abs_dir                         = File::Where->where_dir($relative_dir, @path; 
+     ($abs_dir, $inc_path, $rel_dir)  = File::Where->where_dir($relative_dir, @path);
 
-     $abs_file                        = File::PM2File->where_file($relative_file);
-     ($abs_file, $inc_path, $require) = File::PM2File->where_file($relative_file)
-     $abs_file                        = File::PM2File->where_file($relative_file, \@path);
-     ($abs_file, $inc_path, $require) = File::PM2File->where_file($relative_file, \@path)
-     $abs_file                        = File::PM2File->where_file($relative_file, @path);
-     ($abs_file, $inc_path, $require) = File::PM2File->where_file($relative_file, @path)
+     $abs_file                        = File::Where->where_file($relative_file);
+     ($abs_file, $inc_path, $require) = File::Where->where_file($relative_file)
+     $abs_file                        = File::Where->where_file($relative_file, \@path);
+     ($abs_file, $inc_path, $require) = File::Where->where_file($relative_file, \@path)
+     $abs_file                        = File::Where->where_file($relative_file, @path);
+     ($abs_file, $inc_path, $require) = File::Where->where_file($relative_file, @path)
 
-     $abs_file                        = File::PM2File->where_pm($pm); 
-     ($abs_file, $inc_path, $require) = File::PM2File->where_pm($pm);
-     $abs_file                        = File::PM2File->where_pm($pm, \@path);
-     ($abs_file, $inc_path, $require) = File::PM2File->where_pm($pm, \@path);
-     $abs_file                        = File::PM2File->where_pm($pm, @path);
-     ($abs_file, $inc_path, $require) = File::PM2File->where_pm($pm, @path);
+     $abs_file                        = File::Where->where_pm($pm); 
+     ($abs_file, $inc_path, $require) = File::Where->where_pm($pm);
+     $abs_file                        = File::Where->where_pm($pm, \@path);
+     ($abs_file, $inc_path, $require) = File::Where->where_pm($pm, \@path);
+     $abs_file                        = File::Where->where_pm($pm, @path);
+     ($abs_file, $inc_path, $require) = File::Where->where_pm($pm, @path);
 
-     $abs_dir                         = File::PM2File->where_repository($repository);
-     ($abs_dir,  $inc_path, $rel_dir) = File::PM2File->where_repository($repository);
-     $abs_dir                         = File::PM2File->where_repository($repository, \@path);
-     ($abs_dir,  $inc_path, $rel_dir) = File::PM2File->where_repository($repository, \@path);
-     $abs_dir                         = File::PM2File->where_repository($repository, @path);
-     ($abs_dir,  $inc_path, $rel_dir) = File::PM2File->where_repository($repository, @path);
+     $abs_dir                         = File::Where->where_repository($repository);
+     ($abs_dir,  $inc_path, $rel_dir) = File::Where->where_repository($repository);
+     $abs_dir                         = File::Where->where_repository($repository, \@path);
+     ($abs_dir,  $inc_path, $rel_dir) = File::Where->where_repository($repository, \@path);
+     $abs_dir                         = File::Where->where_repository($repository, @path);
+     ($abs_dir,  $inc_path, $rel_dir) = File::Where->where_repository($repository, @path);
 
 DESCRIPTION
     From time to time, an program needs to know the abolute file for a
-    program module that has not been loaded. The File::PM2File module
-    provides methods to find this information. For loaded files, using the
-    hash %INC may perform better than using the methods in this module.
+    program module that has not been loaded. The File::Where module provides
+    methods to find this information. For loaded files, using the hash %INC
+    may perform better than using the methods in this module.
 
 METHODS/SUBROUTINES
   pm2require subroutine
@@ -323,29 +323,29 @@ DEMONSTRATION
      'E:\User\SoftwareDiamonds\installation\lib\File\Where.pm'
 
 QUALITY ASSURANCE
-    Running the test script 'PM2File.t' found in the
-    "File-PM2File-$VERSION.tar.gz" distribution file verifies the
-    requirements for this module.
+    Running the test script 'Where.t' found in the
+    "File-Where-$VERSION.tar.gz" distribution file verifies the requirements
+    for this module.
 
     All testing software and documentation stems from the Software Test
-    Description (STD) program module 't::File::PM2File', found in the
-    distribution file "File-PM2File-$VERSION.tar.gz".
+    Description (STD) program module 't::File::Where', found in the
+    distribution file "File-Where-$VERSION.tar.gz".
 
-    The 't::File::PM2File' STD POD contains a tracebility matix between the
+    The 't::File::Where' STD POD contains a tracebility matix between the
     requirements established above for this module, and the test steps
-    identified by a 'ok' number from running the 'PM2File.t' test script.
+    identified by a 'ok' number from running the 'Where.t' test script.
 
-    The t::File::PM2File' STD program module '__DATA__' section contains the
+    The t::File::Where' STD program module '__DATA__' section contains the
     data to perform the following:
 
-    *   to generate the test script 'PM2File.t'
+    *   to generate the test script 'Where.t'
 
-    *   generate the tailored STD POD in the 't::File::PM2File' module,
+    *   generate the tailored STD POD in the 't::File::Where' module,
 
-    *   generate the 'PM2File.d' demo script,
+    *   generate the 'Where.d' demo script,
 
     *   replace the POD demonstration section herein with the demo script
-        'PM2File.d' output, and
+        'Where.d' output, and
 
     *   run the test script using Test::Harness with or without the verbose
         option,
@@ -364,24 +364,24 @@ QUALITY ASSURANCE
         "Test_STDmaker-$VERSION.tar.gz' in the site operating system
         executable path only if it is not in the executable path
 
-    *   place the 't::File::PM2File' at the same level in the directory
-        struture as the directory holding the 'File::PM2File' module
+    *   place the 't::File::Where' at the same level in the directory
+        struture as the directory holding the 'File::Where' module
 
     *   execute the following in any directory:
 
-         tmake -test_verbose -replace -run -pm=t::File::PM2File
+         tmake -test_verbose -replace -run -pm=t::File::Where
 
 NOTES
   FILES
-    The installation of the "File-PM2File-$VERSION.tar.gz" distribution file
-    installs the 'Docs::Site_SVD::File_PM2File' SVD program module.
+    The installation of the "File-Where-$VERSION.tar.gz" distribution file
+    installs the 'Docs::Site_SVD::File_Where' SVD program module.
 
-    The __DATA__ data section of the 'Docs::Site_SVD::File_PM2File' contains
+    The __DATA__ data section of the 'Docs::Site_SVD::File_Where' contains
     all the necessary data to generate the POD section of
-    'Docs::Site_SVD::File_PM2File' and the "File-PM2File-$VERSION.tar.gz"
+    'Docs::Site_SVD::File_Where' and the "File-Where-$VERSION.tar.gz"
     distribution file.
 
-    To make use of the 'Docs::Site_SVD::File_PM2File' SVD program module,
+    To make use of the 'Docs::Site_SVD::File_Where' SVD program module,
     perform the following:
 
     *   install "ExtUtils-SVDmaker-$VERSION.tar.gz" from one of the
@@ -396,12 +396,12 @@ NOTES
         executable path only if it is not in the executable path
 
     *   Make any appropriate changes to the __DATA__ section of the
-        'Docs::Site_SVD::File_PM2File' module. For example, any changes to
-        'File::PM2File' will impact the at least 'Changes' field.
+        'Docs::Site_SVD::File_Where' module. For example, any changes to
+        'File::Where' will impact the at least 'Changes' field.
 
     *   Execute the following:
 
-         vmake readme_html all -pm=Docs::Site_SVD::File_PM2File
+         vmake readme_html all -pm=Docs::Site_SVD::File_Where
 
   AUTHOR
     The holder of the copyright and maintainer is
@@ -451,11 +451,11 @@ Title Page
 
       File::Where - find the absolute file for a program module; dir for a repository
 
-     Revision: A
+     Revision: B
 
-     Version: 0.02
+     Version: 0.03
 
-     Date: 2004/04/08
+     Date: 2004/04/09
 
      Prepared for: General Public 
 
@@ -485,7 +485,7 @@ Title Page
     module supercedes the File::PM2File program module.
 
   1.3 Document overview.
-    This document releases File::Where version 0.02 providing a description
+    This document releases File::Where version 0.03 providing a description
     of the inventory, installation instructions and other information
     necessary to utilize and track this release.
 
@@ -496,7 +496,7 @@ Title Page
   3.1 Inventory of materials released.
     This document releases the file
 
-     File-Where-0.02.tar.gz
+     File-Where-0.03.tar.gz
 
     found at the following repository(s):
 
@@ -545,20 +545,20 @@ Title Page
 
      file                                                         version date       comment
      ------------------------------------------------------------ ------- ---------- ------------------------
-     lib/Docs/Site_SVD/File_Where.pm                              0.02    2004/04/08 revised 0.01
-     MANIFEST                                                     0.02    2004/04/08 generated, replaces 0.01
-     Makefile.PL                                                  0.02    2004/04/08 generated, replaces 0.01
-     README                                                       0.02    2004/04/08 generated, replaces 0.01
-     lib/File/Where.pm                                            1.13    2004/04/08 revised 1.12
-     t/File/where.d                                               0.02    2004/04/08 revised 0.01
-     t/File/Where.pm                                              0.02    2004/04/08 revised 0.01
-     t/File/where.t                                               0.02    2004/04/08 revised 0.01
+     lib/Docs/Site_SVD/File_Where.pm                              0.03    2004/04/09 revised 0.02
+     MANIFEST                                                     0.03    2004/04/09 generated, replaces 0.02
+     Makefile.PL                                                  0.03    2004/04/09 generated, replaces 0.02
+     README                                                       0.03    2004/04/09 generated, replaces 0.02
+     lib/File/Where.pm                                            1.14    2004/04/09 revised 1.13
      t/File/where.d                                               0.02    2004/04/08 unchanged
      t/File/Where.pm                                              0.02    2004/04/08 unchanged
      t/File/where.t                                               0.02    2004/04/08 unchanged
-     t/File/File/Package.pm                                       1.14    2004/04/08 revised 1.13
-     t/File/Test/Tech.pm                                          1.17    2004/04/08 unchanged
-     t/File/Data/Secs2.pm                                         1.15    2004/04/08 unchanged
+     t/File/where.d                                               0.02    2004/04/08 unchanged
+     t/File/Where.pm                                              0.02    2004/04/08 unchanged
+     t/File/where.t                                               0.02    2004/04/08 unchanged
+     t/File/File/Package.pm                                       1.14    2004/04/09 unchanged
+     t/File/Test/Tech.pm                                          1.17    2004/04/09 unchanged
+     t/File/Data/Secs2.pm                                         1.15    2004/04/09 unchanged
 
   3.3 Changes
     The changes to the previous version are as follows:
@@ -574,6 +574,26 @@ Title Page
 
         This bug was discovered because the obsoleted File::PM2File module
         now uses File::Where for backwards compatibility.
+
+    File-Where-0.03
+         Subject: FAIL Test-Tech-0.18 i586-linux 2.4.22-4tr 
+         From: cpansmoke@alternation.net 
+         Date: Thu,  8 Apr 2004 15:09:35 -0300 (ADT) 
+
+         PERL_DL_NONLAZY=1 /usr/bin/perl5.8.0 "-MExtUtils::Command::MM" "-e" "test_harness(0, 'blib/lib', 'blib/arch')" t/Test/Tech/Tech.t
+         t/Test/Tech/Tech....Can't locate FindBIN.pm
+
+         Summary of my perl5 (revision 5.0 version 8 subversion 0) configuration:
+           Platform:
+             osname=linux, osvers=2.4.22-4tr, archname=i586-linux
+
+        This is capitalization problem. The program module name is 'FindBin'
+        not 'FindBIN' which is part of Perl. Microsoft does not care about
+        capitalization differences while linux does. This error is in the
+        test script automatically generated by "Test::STDmaker" and was just
+        introduced when moved test script libraries from "tlib" to the
+        directory of the test script. Repaired "Test::STDmaker" and
+        regenerated the distribution.
 
   3.4 Adaptation data.
     This installation requires that the installation site has the Perl
@@ -604,12 +624,12 @@ Title Page
           http://www.softwarediamonds/packages/
           http://www.perl.com/CPAN-local/authors/id/S/SO/SOFTDIA/
 
-        Right click on 'File-Where-0.02.tar.gz' and download to a temporary
+        Right click on 'File-Where-0.03.tar.gz' and download to a temporary
         installation directory. Enter the following where $make is 'nmake'
         for microsoft windows; otherwise 'make'.
 
-         gunzip File-Where-0.02.tar.gz
-         tar -xf File-Where-0.02.tar
+         gunzip File-Where-0.03.tar.gz
+         tar -xf File-Where-0.03.tar
          perl Makefile.PL
          $make test
          $make install
